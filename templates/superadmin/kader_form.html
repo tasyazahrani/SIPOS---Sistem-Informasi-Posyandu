@@ -1,0 +1,370 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if kader %}Edit Kader{% else %}Tambah Kader Baru{% endif %} - Super Admin SIPOS</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif; }
+        body { background-color: #fcf9f4; }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #e5e2dd; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #a93620; border-radius: 10px; }
+        
+        .sidebar-item {
+            transition: all 0.2s ease;
+            border-radius: 12px;
+        }
+        .sidebar-item:hover {
+            background-color: #f6f3ee;
+            color: #a93620;
+        }
+        .sidebar-item.active {
+            background-color: #f26b50;
+            color: #ffffff;
+        }
+        
+        .btn-primary {
+            background-color: #a93620;
+            color: white;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #881f0b;
+            transform: scale(0.98);
+        }
+        .btn-secondary {
+            background-color: #e5e2dd;
+            color: #1c1c19;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #d4d0ca;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #e5e2dd;
+            border-radius: 12px;
+            transition: all 0.2s;
+            background-color: white;
+            font-size: 0.9rem;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #a93620;
+            box-shadow: 0 0 0 3px rgba(169, 54, 32, 0.1);
+        }
+        .form-input-disabled {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+        }
+        
+        label .required::after {
+            content: "*";
+            color: #ba1a1a;
+            margin-left: 4px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+    </style>
+</head>
+<body class="bg-[#fcf9f4]">
+
+    <!-- SIDEBAR (SAMA DENGAN MANAJEMEN USER) -->
+    <aside class="hidden md:flex flex-col h-screen w-[280px] fixed left-0 top-0 bg-white border-r border-[#dfbfb9] z-40 shadow-sm">
+        <div class="px-6 py-8 border-b border-[#e5e2dd]">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#a93620] text-3xl">health_and_safety</span>
+                <div>
+                    <h1 class="text-2xl font-bold text-[#a93620]">SIPOS</h1>
+                    <p class="text-xs text-[#58413d]">Super Admin Panel</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
+            <a href="{% url 'superadmin:dashboard' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="text-sm font-semibold">Dashboard</span>
+            </a>
+            <a href="{% url 'superadmin:manajemen_user' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">people</span>
+                <span class="text-sm font-medium">Manajemen User</span>
+            </a>
+            <a href="{% url 'superadmin:manajemen_kader' %}" class="sidebar-item active flex items-center gap-3 px-4 py-3 transition-all bg-[#f26b50] text-white">
+                <span class="material-symbols-outlined">admin_panel_settings</span>
+                <span class="text-sm font-medium">Manajemen Kader</span>
+            </a>
+            <a href="{% url 'superadmin:manajemen_posyandu' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">location_city</span>
+                <span class="text-sm font-medium">Manajemen Posyandu</span>
+            </a>
+            <a href="{% url 'superadmin:laporan_sistem' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">assessment</span>
+                <span class="text-sm font-medium">Laporan Sistem</span>
+            </a>
+            <a href="{% url 'superadmin:backup_data' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">backup</span>
+                <span class="text-sm font-medium">Backup Data</span>
+            </a>
+            <a href="{% url 'superadmin:pengaturan_sistem' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">settings_system_daydream</span>
+                <span class="text-sm font-medium">Pengaturan Sistem</span>
+            </a>
+        </nav>
+
+        <div class="px-4 py-6 border-t border-[#e5e2dd] space-y-1">
+            <a href="{% url 'superadmin:pengaturan' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-[#1c1c19] hover:bg-[#f6f3ee] hover:text-[#a93620]">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-sm font-medium">Pengaturan</span>
+            </a>
+            <form method="post" action="{% url 'logout' %}" class="w-full">
+                {% csrf_token %}
+                <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all text-[#ba1a1a] hover:bg-[#ffdad6]">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="text-sm font-medium">Keluar</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 md:ml-[280px] min-h-screen">
+        <header class="sticky top-0 z-30 bg-[#fcf9f4]/95 backdrop-blur-md shadow-sm border-b border-[#dfbfb9]">
+            <div class="flex justify-between items-center px-6 py-4">
+                <button id="sidebarToggle" class="md:hidden p-2 rounded-lg text-[#58413d] hover:bg-[#f6f3ee]">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="flex items-center gap-4 flex-1 max-w-md">
+                    <div class="relative w-full">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#58413d]">search</span>
+                        <input type="text" placeholder="Cari data..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-[#dfbfb9] rounded-xl focus:ring-2 focus:ring-[#a93620] outline-none text-sm">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="relative p-2 rounded-full text-[#58413d] hover:bg-[#f6f3ee]">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#ba1a1a] rounded-full border-2 border-[#fcf9f4]"></span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-3 border-l border-[#dfbfb9]">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold text-[#1c1c19]">{{ user.get_full_name|default:user.username }}</p>
+                            <p class="text-xs text-[#58413d]">Super Admin</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-[#f26b50] flex items-center justify-center text-white font-bold shadow-sm">
+                            {{ user.first_name|slice:":1"|default:user.username|slice:":1"|upper }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="px-6 py-6">
+            <div class="max-w-3xl mx-auto fade-in">
+
+                <!-- Breadcrumb -->
+                <div class="flex items-center gap-4 mb-6">
+                    <a href="{% url 'superadmin:manajemen_kader' %}" class="text-[#a93620] hover:text-[#881f0b] transition">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </a>
+                    <div>
+                        <h1 class="text-2xl font-bold text-[#1c1c19]">
+                            {% if kader %}
+                                Edit Data Kader
+                            {% else %}
+                                Tambah Kader Baru
+                            {% endif %}
+                        </h1>
+                        <p class="text-sm text-[#58413d] mt-1">
+                            {% if kader %}
+                                Perbaharui informasi kader di bawah ini
+                            {% else %}
+                                Isi formulir untuk menambahkan kader baru ke sistem
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700 border border-red-200{% else %}bg-green-100 text-green-700 border border-green-200{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Form Card -->
+                <div class="bg-white rounded-xl border border-[#e5e2dd] overflow-hidden">
+                    <div class="bg-gradient-to-r from-[#a93620] to-[#881f0b] px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-white text-2xl">person_add</span>
+                            <h2 class="text-xl font-semibold text-white">Formulir Kader</h2>
+                        </div>
+                    </div>
+
+                    <form method="post" class="p-6 space-y-5">
+                        {% csrf_token %}
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <!-- Username -->
+                            <div>
+                                <label class="block text-sm font-semibold text-[#1c1c19] mb-1.5">
+                                    <span class="required">Username</span>
+                                </label>
+                                <input type="text" name="username" value="{{ kader.username|default:'' }}" 
+                                       class="form-input {% if kader %}form-input-disabled{% endif %}" 
+                                       {% if not kader %}required{% endif %} 
+                                       {% if kader %}readonly{% endif %}>
+                                <p class="text-xs text-[#58413d] mt-1">
+                                    {% if kader %}
+                                        Username tidak dapat diubah
+                                    {% else %}
+                                        150 karakter atau kurang. Huruf, angka, dan @/./+/-/_ saja.
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                            <!-- Email -->
+                            <div>
+                                <label class="block text-sm font-semibold text-[#1c1c19] mb-1.5">Email</label>
+                                <input type="email" name="email" value="{{ kader.email|default:'' }}" 
+                                       class="form-input">
+                            </div>
+
+                            <!-- Password (hanya untuk tambah) -->
+                            {% if not kader %}
+                                <div>
+                                    <label class="block text-sm font-semibold text-[#1c1c19] mb-1.5">
+                                        <span class="required">Password</span>
+                                    </label>
+                                    <input type="password" name="password1" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-[#1c1c19] mb-1.5">
+                                        <span class="required">Konfirmasi Password</span>
+                                    </label>
+                                    <input type="password" name="password2" class="form-input" required>
+                                </div>
+                            {% else %}
+                                <div class="md:col-span-2">
+                                    <div class="bg-[#f6f3ee] rounded-xl p-3 text-sm text-[#58413d] flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-base">info</span>
+                                        <span>Password tidak dapat diubah dari form ini. Gunakan tombol "Reset Password" di halaman detail kader.</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Nama Depan -->
+                            <div>
+                                <label class="block text-sm font-semibold text-[#1c1c19] mb-1.5">Nama Depan</label>
+                                <input type="text" name="first_name" value="{{ kader.first_name|default:'' }}" 
+                                       class="form-input" placeholder="Contoh: Ahmad">
+                            </div>
+
+                            <!-- Nama Belakang -->
+                            <div>
+                                <label class="block text-sm font-semibold text-[#1c1c19] mb-1.5">Nama Belakang</label>
+                                <input type="text" name="last_name" value="{{ kader.last_name|default:'' }}" 
+                                       class="form-input" placeholder="Contoh: Setiawan">
+                            </div>
+                        </div>
+
+                        <!-- Status Keaktifan -->
+                        <div class="border-t border-[#e5e2dd] pt-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-[#1c1c19] mb-1.5">Status Akun</label>
+                                    <select name="is_active" class="form-select">
+                                        <option value="True" {% if kader.is_active == True %}selected{% endif %}>Aktif</option>
+                                        <option value="False" {% if kader.is_active == False %}selected{% endif %}>Tidak Aktif</option>
+                                    </select>
+                                </div>
+
+                                {% if kader and kader.date_joined %}
+                                <div>
+                                    <label class="block text-sm font-semibold text-[#1c1c19] mb-1.5">Tanggal Bergabung</label>
+                                    <input type="text" value="{{ kader.date_joined|date:'d F Y H:i' }}" class="form-input form-input-disabled" readonly disabled>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Informasi Tambahan -->
+                        <div class="border-t border-[#e5e2dd] pt-5">
+                            <h3 class="text-md font-bold text-[#1c1c19] mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[#a93620]">assignment_ind</span>
+                                Informasi Tambahan Kader
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-[#1c1c19] mb-1.5">Nomor Telepon</label>
+                                    <input type="tel" name="phone" value="{{ profile.phone|default:'' }}" 
+                                           class="form-input" placeholder="08xxxxxxxxxx">
+                                    <p class="text-xs text-[#58413d] mt-1">Contoh: 081234567890</p>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-[#1c1c19] mb-1.5">Alamat</label>
+                                    <textarea name="address" rows="2" class="form-textarea" placeholder="Jl. ... RT/RW, Desa, Kecamatan">{{ profile.address|default:'' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="flex justify-end gap-3 pt-4 border-t border-[#e5e2dd]">
+                            <a href="{% url 'superadmin:manajemen_kader' %}" class="btn-secondary px-5 py-2.5 rounded-xl flex items-center gap-2">
+                                <span class="material-symbols-outlined text-base">close</span>
+                                <span>Batal</span>
+                            </a>
+                            <button type="submit" class="btn-primary px-5 py-2.5 rounded-xl flex items-center gap-2">
+                                <span class="material-symbols-outlined text-base">save</span>
+                                <span>{% if kader %}Simpan Perubahan{% else %}Simpan Kader{% endif %}</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                {% if kader %}
+                <div class="mt-6 p-4 bg-[#fef9e3] rounded-xl border border-[#f5e2b9] flex items-start gap-3">
+                    <span class="material-symbols-outlined text-[#d4a11e]">info</span>
+                    <div class="text-sm text-[#5c4b1f]">
+                        <strong class="font-semibold">Catatan:</strong> Untuk mereset password kader, gunakan tombol "Reset Password" di halaman 
+                        <a href="{% url 'superadmin:kader_detail' kader.id %}" class="text-[#a93620] font-semibold underline">detail kader</a>.
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('aside');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', () => sidebar.classList.toggle('hidden'));
+        }
+    </script>
+</body>
+</html>

@@ -157,34 +157,47 @@ def kader_create(request):
 @login_required
 @superadmin_required
 def kader_edit(request, id):
-    """Edit kader"""
-    kader = get_object_or_404(User, id=id, groups__name='Kader')
+    kader = get_object_or_404(User, id=id)
+    
+    if kader.is_superuser:
+        messages.error(request, 'Tidak dapat mengedit akun super admin!')
+        return redirect('superadmin:manajemen_kader')
     
     if request.method == 'POST':
-        email = request.POST.get('email')
-        first_name = request.POST.get('first_name')
-        is_active = request.POST.get('is_active') == 'on'
+        email = request.POST.get('email', '').strip() or None
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        is_active = request.POST.get('is_active') == 'True'
+        
+        if email and email != kader.email and User.objects.filter(email=email).exists():
+            messages.error(request, 'Email sudah terdaftar!')
+            return render(request, 'superadmin/kader_form.html', {'kader': kader})
         
         kader.email = email
         kader.first_name = first_name
+        kader.last_name = last_name
         kader.is_active = is_active
         kader.save()
         
-        messages.success(request, f'Data kader "{kader.username}" berhasil diupdate!')
+        messages.success(request, f'Data kader "{kader.first_name} {kader.last_name}" berhasil diupdate!')
         return redirect('superadmin:manajemen_kader')
     
     return render(request, 'superadmin/kader_form.html', {'kader': kader})
-
 
 @login_required
 @superadmin_required
 def kader_delete(request, id):
     """Hapus kader"""
-    kader = get_object_or_404(User, id=id, groups__name='Kader')
+    kader = get_object_or_404(User, id=id)
     
-    # Cegah menghapus diri sendiri jika dia juga super admin
-    if kader.id == request.user.id and request.user.is_superuser:
+    # Cegah menghapus diri sendiri
+    if kader.id == request.user.id:
         messages.error(request, 'Anda tidak dapat menghapus akun sendiri!')
+        return redirect('superadmin:manajemen_kader')
+    
+    # Cegah menghapus superadmin
+    if kader.is_superuser:
+        messages.error(request, 'Tidak dapat menghapus akun super admin!')
         return redirect('superadmin:manajemen_kader')
     
     if request.method == 'POST':
@@ -200,11 +213,15 @@ def kader_delete(request, id):
 @superadmin_required
 def kader_reset_password(request, id):
     """Reset password kader"""
-    kader = get_object_or_404(User, id=id, groups__name='Kader')
+    kader = get_object_or_404(User, id=id)
+    
+    if kader.is_superuser:
+        messages.error(request, 'Tidak dapat mereset password super admin!')
+        return redirect('superadmin:manajemen_kader')
     
     if request.method == 'POST':
-        new_password = request.POST.get('new_password')
-        confirm_password = request.POST.get('confirm_password')
+        new_password = request.POST.get('new_password', '')
+        confirm_password = request.POST.get('confirm_password', '')
         
         if not new_password:
             messages.error(request, 'Password baru harus diisi!')
