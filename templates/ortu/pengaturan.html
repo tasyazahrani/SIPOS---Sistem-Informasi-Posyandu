@@ -1,0 +1,572 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan - SIPOS</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif; }
+        body { background-color: #fcf9f4; }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #e5e2dd; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #a93620; border-radius: 10px; }
+        
+        .sidebar-item {
+            transition: all 0.2s ease;
+            border-radius: 12px;
+        }
+        .sidebar-item:hover {
+            background-color: #f6f3ee;
+            color: #a93620;
+        }
+        .sidebar-item.active {
+            background-color: #f26b50;
+            color: #ffffff;
+        }
+        .sidebar-item.active .material-symbols-outlined {
+            color: #ffffff;
+        }
+        
+        .btn-primary {
+            background-color: #a93620;
+            color: white;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #881f0b;
+            transform: scale(0.98);
+        }
+        
+        .btn-secondary {
+            background-color: #e5e2dd;
+            color: #1c1c19;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .form-input {
+            border-radius: 12px;
+            border: 1px solid #dfbfb9;
+            transition: all 0.2s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #a93620;
+            box-shadow: 0 0 0 3px rgba(169, 54, 32, 0.2);
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1c1c19;
+            margin-bottom: 6px;
+            display: block;
+        }
+        
+        .setting-card {
+            background-color: white;
+            border-radius: 16px;
+            border: 1px solid #e5e2dd;
+            transition: all 0.3s ease;
+        }
+        .setting-card:hover {
+            box-shadow: 0 4px 20px rgba(169, 54, 32, 0.08);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        
+        .tab-active {
+            background-color: #f26b50;
+            color: white;
+        }
+        .tab-inactive {
+            background-color: #f6f3ee;
+            color: #58413d;
+        }
+        .tab-inactive:hover {
+            background-color: #e5e2dd;
+        }
+    </style>
+</head>
+<body class="bg-[#fcf9f4]">
+
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col h-screen w-[280px] fixed left-0 top-0 bg-white border-r border-[#dfbfb9] z-40 shadow-sm">
+        <div class="px-6 py-8 border-b border-[#e5e2dd]">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#a93620] text-3xl">health_and_safety</span>
+                <div>
+                    <h1 class="text-2xl font-bold text-[#a93620]">SIPOS</h1>
+                    <p class="text-xs text-[#58413d] mt-0.5">Sistem Informasi Posyandu</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
+            <a href="{% url 'dashboard_ortu' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="text-sm font-semibold">Dashboard</span>
+            </a>
+            <a href="{% url 'ortu:data_anak' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">child_care</span>
+                <span class="text-sm font-medium">Data Anak</span>
+            </a>
+            <a href="{% url 'ortu:riwayat_penimbangan' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">monitor_weight</span>
+                <span class="text-sm font-medium">Riwayat Penimbangan</span>
+            </a>
+            <a href="{% url 'ortu:riwayat_imunisasi' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">vaccines</span>
+                <span class="text-sm font-medium">Riwayat Imunisasi</span>
+            </a>
+            <a href="{% url 'ortu:artikel_edukasi' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">article</span>
+                <span class="text-sm font-medium">Artikel Edukasi</span>
+            </a>
+            <a href="{% url 'ortu:jadwal_imunisasi' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span class="text-sm font-medium">Jadwal Imunisasi</span>
+            </a>
+        </nav>
+
+        <div class="px-4 py-6 border-t border-[#e5e2dd] space-y-1">
+            <a href="{% url 'ortu:pengaturan_ortu' %}" class="sidebar-item active flex items-center gap-3 px-4 py-3 rounded-xl transition-all bg-[#f26b50] text-white">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-sm font-medium">Pengaturan</span>
+            </a>
+            <form method="post" action="{% url 'logout' %}" class="w-full">
+                {% csrf_token %}
+                <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all text-[#ba1a1a] hover:bg-[#ffdad6]">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="text-sm font-medium">Keluar</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 md:ml-[280px] min-h-screen">
+        <header class="sticky top-0 z-30 bg-[#fcf9f4]/95 backdrop-blur-md shadow-sm border-b border-[#dfbfb9]">
+            <div class="flex justify-between items-center px-6 py-4">
+                <button id="sidebarToggle" class="md:hidden p-2 rounded-lg text-[#58413d] hover:bg-[#f6f3ee]">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="flex items-center gap-4 flex-1 max-w-md">
+                    <div class="relative w-full">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#58413d]">search</span>
+                        <input type="text" placeholder="Cari data..." 
+                               class="w-full pl-10 pr-4 py-2.5 bg-white border border-[#dfbfb9] rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none text-sm transition-all">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="relative p-2 rounded-full text-[#58413d] hover:bg-[#f6f3ee] transition-colors">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#ba1a1a] rounded-full border-2 border-[#fcf9f4]"></span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-3 border-l border-[#dfbfb9]">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold text-[#1c1c19]">{{ user.get_full_name|default:user.username }}</p>
+                            <p class="text-xs text-[#58413d]">Orang Tua</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-[#f26b50] flex items-center justify-center text-white font-bold shadow-sm">
+                            {{ user.first_name|slice:":1"|default:user.username|slice:":1"|upper }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="px-6 py-6">
+            <div class="max-w-4xl mx-auto fade-in">
+
+                <!-- Header -->
+                <div class="mb-6">
+                    <h1 class="text-2xl md:text-3xl font-bold text-[#1c1c19]">Pengaturan Akun</h1>
+                    <p class="text-sm text-[#58413d] mt-1">Kelola informasi akun dan preferensi Anda</p>
+                </div>
+
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700 border border-red-200{% else %}bg-green-100 text-green-700 border border-green-200{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Tabs -->
+                <div class="flex gap-2 mb-6 border-b border-[#e5e2dd] pb-2">
+                    <button onclick="showTab('profile')" id="tab-profile-btn" class="px-5 py-2.5 rounded-xl font-semibold transition-all tab-active">
+                        <span class="material-symbols-outlined align-middle text-sm mr-1">person</span>
+                        Profil
+                    </button>
+                    <button onclick="showTab('anak')" id="tab-anak-btn" class="px-5 py-2.5 rounded-xl font-semibold transition-all tab-inactive">
+                        <span class="material-symbols-outlined align-middle text-sm mr-1">child_care</span>
+                        Data Anak
+                    </button>
+                    <button onclick="showTab('password')" id="tab-password-btn" class="px-5 py-2.5 rounded-xl font-semibold transition-all tab-inactive">
+                        <span class="material-symbols-outlined align-middle text-sm mr-1">lock</span>
+                        Password
+                    </button>
+                    <button onclick="showTab('notification')" id="tab-notification-btn" class="px-5 py-2.5 rounded-xl font-semibold transition-all tab-inactive">
+                        <span class="material-symbols-outlined align-middle text-sm mr-1">notifications</span>
+                        Notifikasi
+                    </button>
+                </div>
+
+                <!-- Tab Profil -->
+                <div id="tab-profile" class="tab-content">
+                    <div class="setting-card p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[#e5e2dd]">
+                            <span class="material-symbols-outlined text-[#a93620] text-2xl">badge</span>
+                            <h2 class="text-xl font-semibold text-[#1c1c19]">Informasi Profil</h2>
+                        </div>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="profile">
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="form-label">Username</label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">person</span>
+                                        <input type="text" value="{{ user.username }}" disabled
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl bg-[#f6f3ee] text-[#58413d] cursor-not-allowed">
+                                    </div>
+                                    <p class="text-xs text-[#8c716b] mt-1">Username tidak dapat diubah</p>
+                                </div>
+
+                                <div>
+                                    <label class="form-label">Role / Hak Akses</label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">admin_panel_settings</span>
+                                        <input type="text" value="Orang Tua" disabled
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl bg-[#f6f3ee] text-[#58413d] cursor-not-allowed">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="form-label">Nama Lengkap</label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">badge</span>
+                                        <input type="text" name="first_name" value="{{ user.first_name|default:'' }}"
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="Nama lengkap Anda">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="form-label">Email</label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">mail</span>
+                                        <input type="email" name="email" value="{{ user.email|default:'' }}"
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="email@example.com">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="form-label">No. HP</label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">phone</span>
+                                        <input type="text" name="no_hp" value="{{ balita.no_hp_orang_tua|default:'' }}"
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="Nomor HP untuk kontak">
+                                    </div>
+                                    <p class="text-xs text-[#8c716b] mt-1">Digunakan untuk notifikasi dan kontak darurat</p>
+                                </div>
+
+                                <div>
+                                    <label class="form-label">Tanggal Bergabung</label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">calendar_today</span>
+                                        <input type="text" value="{{ user.date_joined|date:"d F Y" }}" disabled
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl bg-[#f6f3ee] text-[#58413d] cursor-not-allowed">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end mt-6 pt-4 border-t border-[#e5e2dd]">
+                                <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">save</span>
+                                    <span>Simpan Perubahan</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tab Data Anak -->
+                <div id="tab-anak" class="tab-content hidden">
+                    <div class="setting-card p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[#e5e2dd]">
+                            <span class="material-symbols-outlined text-[#a93620] text-2xl">child_care</span>
+                            <h2 class="text-xl font-semibold text-[#1c1c19]">Informasi Data Anak</h2>
+                        </div>
+
+                        {% if balita %}
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="info-card p-4 bg-[#f6f3ee] rounded-xl">
+                                    <p class="text-xs text-[#58413d]">Nama Anak</p>
+                                    <p class="text-lg font-semibold text-[#1c1c19]">{{ balita.nama }}</p>
+                                </div>
+                                <div class="info-card p-4 bg-[#f6f3ee] rounded-xl">
+                                    <p class="text-xs text-[#58413d]">Usia</p>
+                                    <p class="text-lg font-semibold text-[#1c1c19]">{{ balita.usia }}</p>
+                                </div>
+                                <div class="info-card p-4 bg-[#f6f3ee] rounded-xl">
+                                    <p class="text-xs text-[#58413d]">Jenis Kelamin</p>
+                                    <p class="text-lg font-semibold text-[#1c1c19]">{{ balita.get_jenis_kelamin_display }}</p>
+                                </div>
+                                <div class="info-card p-4 bg-[#f6f3ee] rounded-xl">
+                                    <p class="text-xs text-[#58413d]">NIK</p>
+                                    <p class="text-lg font-semibold text-[#1c1c19]">{{ balita.nik|default:"-" }}</p>
+                                </div>
+                                <div class="info-card p-4 bg-[#f6f3ee] rounded-xl md:col-span-2">
+                                    <p class="text-xs text-[#58413d]">Alamat</p>
+                                    <p class="text-lg font-semibold text-[#1c1c19]">{{ balita.alamat }}</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <a href="{% url 'ortu:data_anak' %}" class="btn-secondary px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">visibility</span>
+                                    <span>Lihat Detail Lengkap</span>
+                                </a>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-8">
+                            <span class="material-symbols-outlined text-5xl text-gray-300">child_care</span>
+                            <p class="text-[#58413d] mt-3">Data anak belum terhubung dengan akun Anda.</p>
+                            <p class="text-sm text-[#58413d] mt-1">Silakan hubungi admin posyandu untuk menghubungkan data anak.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Tab Password -->
+                <div id="tab-password" class="tab-content hidden">
+                    <div class="setting-card p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[#e5e2dd]">
+                            <span class="material-symbols-outlined text-[#a93620] text-2xl">lock</span>
+                            <h2 class="text-xl font-semibold text-[#1c1c19]">Ubah Password</h2>
+                        </div>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="password">
+                            
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="form-label">Password Lama <span class="text-red-500">*</span></label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">lock</span>
+                                        <input type="password" name="old_password" id="old_password" required
+                                               class="form-input w-full pl-10 pr-10 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="Masukkan password lama">
+                                        <button type="button" onclick="togglePassword('old_password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#8c716b] hover:text-[#a93620]">
+                                            <span class="material-symbols-outlined text-lg">visibility</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="form-label">Password Baru <span class="text-red-500">*</span></label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">lock</span>
+                                        <input type="password" name="new_password1" id="new_password1" required
+                                               class="form-input w-full pl-10 pr-10 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="Minimal 8 karakter">
+                                        <button type="button" onclick="togglePassword('new_password1')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#8c716b] hover:text-[#a93620]">
+                                            <span class="material-symbols-outlined text-lg">visibility</span>
+                                        </button>
+                                    </div>
+                                    <p class="text-xs text-[#8c716b] mt-1">Password harus minimal 8 karakter</p>
+                                </div>
+
+                                <div>
+                                    <label class="form-label">Konfirmasi Password Baru <span class="text-red-500">*</span></label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">lock</span>
+                                        <input type="password" name="new_password2" id="new_password2" required
+                                               class="form-input w-full pl-10 pr-10 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="Ulangi password baru">
+                                        <button type="button" onclick="togglePassword('new_password2')" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#8c716b] hover:text-[#a93620]">
+                                            <span class="material-symbols-outlined text-lg">visibility</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 p-4 bg-[#f6f3ee] rounded-xl">
+                                <p class="text-sm text-[#58413d]">
+                                    <span class="material-symbols-outlined text-sm align-middle">info</span>
+                                    Tips: Gunakan kombinasi huruf besar, huruf kecil, angka, dan simbol untuk password yang kuat.
+                                </p>
+                            </div>
+
+                            <div class="flex justify-end mt-6 pt-4 border-t border-[#e5e2dd]">
+                                <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">key</span>
+                                    <span>Ubah Password</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tab Notifikasi -->
+                <div id="tab-notification" class="tab-content hidden">
+                    <div class="setting-card p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-[#e5e2dd]">
+                            <span class="material-symbols-outlined text-[#a93620] text-2xl">notifications</span>
+                            <h2 class="text-xl font-semibold text-[#1c1c19]">Preferensi Notifikasi</h2>
+                        </div>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="notification">
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-4 bg-[#f6f3ee] rounded-xl">
+                                    <div>
+                                        <h3 class="font-semibold text-[#1c1c19]">Notifikasi Email</h3>
+                                        <p class="text-sm text-[#58413d]">Dapatkan notifikasi melalui email</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="email_notif" class="sr-only peer" {% if email_notif %}checked{% endif %}>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#a93620]"></div>
+                                    </label>
+                                </div>
+
+                                <div class="flex items-center justify-between p-4 bg-[#f6f3ee] rounded-xl">
+                                    <div>
+                                        <h3 class="font-semibold text-[#1c1c19]">Notifikasi SMS</h3>
+                                        <p class="text-sm text-[#58413d]">Dapatkan notifikasi melalui SMS</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="sms_notif" class="sr-only peer" {% if sms_notif %}checked{% endif %}>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#a93620]"></div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end mt-6 pt-4 border-t border-[#e5e2dd]">
+                                <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">save</span>
+                                    <span>Simpan Preferensi</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Informasi Akun -->
+                <div class="mt-6 p-4 bg-[#cfe1f8]/30 rounded-xl border border-[#cfe1f8]">
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-[#4f6073]">security</span>
+                        <div class="text-sm text-[#58413d]">
+                            <p class="font-semibold mb-1">Keamanan Akun</p>
+                            <p class="text-xs">Jangan bagikan password Anda kepada siapapun. SIPOS tidak akan pernah meminta password Anda melalui email atau telepon.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="mt-6 bg-white p-5 rounded-xl border border-[#e5e2dd] text-center">
+                    <p class="text-xs text-[#58413d]">© {% now "Y" %} SIPOS - Sistem Informasi Posyandu Terintegrasi</p>
+                    <p class="text-xs text-[#8c716b] mt-1">Warm Management System | Pengaturan Akun</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sidebar toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('aside');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('hidden');
+            });
+        }
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('[id$="-btn"]').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('tab-inactive');
+            });
+            
+            // Show selected tab
+            const selectedTab = document.getElementById(`tab-${tabName}`);
+            if (selectedTab) {
+                selectedTab.classList.remove('hidden');
+            }
+            
+            // Add active class to selected button
+            const selectedBtn = document.getElementById(`tab-${tabName}-btn`);
+            if (selectedBtn) {
+                selectedBtn.classList.remove('tab-inactive');
+                selectedBtn.classList.add('tab-active');
+            }
+        }
+
+        // Toggle password visibility
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            if (field.type === 'password') {
+                field.type = 'text';
+            } else {
+                field.type = 'password';
+            }
+        }
+
+        // Password match validation
+        const newPassword1 = document.getElementById('new_password1');
+        const newPassword2 = document.getElementById('new_password2');
+        
+        function validatePasswordMatch() {
+            if (newPassword1 && newPassword2) {
+                if (newPassword1.value !== newPassword2.value) {
+                    newPassword2.setCustomValidity('Password tidak sama');
+                } else {
+                    newPassword2.setCustomValidity('');
+                }
+            }
+        }
+        
+        if (newPassword1 && newPassword2) {
+            newPassword1.addEventListener('change', validatePasswordMatch);
+            newPassword2.addEventListener('keyup', validatePasswordMatch);
+        }
+    </script>
+</body>
+</html>

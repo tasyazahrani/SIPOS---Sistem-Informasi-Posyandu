@@ -1,0 +1,318 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Posyandu - SIPOS</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif; }
+        body { background: linear-gradient(135deg, #fcf9f4 0%, #f0ede9 100%); min-height: 100vh; }
+        
+        .badge-mendatang { background-color: #cfe1f8; color: #4f6073; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        .badge-berlangsung { background-color: #c0ecda; color: #002117; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        .badge-terlewat { background-color: #e5e2dd; color: #8c716b; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        
+        .btn-primary {
+            background-color: #a93620;
+            color: white;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #881f0b;
+            transform: scale(0.98);
+        }
+        
+        .btn-outline {
+            border: 2px solid #a93620;
+            color: #a93620;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-outline:hover {
+            background-color: #a93620;
+            color: white;
+            transform: scale(0.98);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        
+        .nav-link {
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            color: #a93620;
+        }
+        .nav-link.active {
+            color: #a93620;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Navigation (Sama dengan Home) -->
+    <nav class="sticky top-0 z-50 bg-[#fcf9f4]/95 backdrop-blur-md border-b border-[#dfbfb9]">
+        <div class="max-w-[1440px] mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[#a93620] text-3xl">health_and_safety</span>
+                    <div>
+                        <h1 class="text-2xl font-bold text-[#a93620]">SIPOS</h1>
+                        <p class="text-xs text-[#58413d]">Sistem Informasi Posyandu</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="/" class="nav-link text-[#1c1c19] hover:text-[#a93620] transition font-medium">Beranda</a>
+                    <a href="/publik/jadwal-posyandu/" class="nav-link active text-[#a93620] font-semibold">Jadwal Posyandu</a>
+                    <a href="/publik/cek-status/" class="nav-link text-[#1c1c19] hover:text-[#a93620] transition font-medium">Cek Status Gizi</a>
+                </div>
+
+                <!-- Login Button -->
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'login' %}" class="btn-outline px-5 py-2 rounded-xl font-semibold hidden md:block">
+                        Login
+                    </a>
+                    <a href="{% url 'register' %}" class="btn-primary px-5 py-2 rounded-xl font-semibold">
+                        Daftar Sekarang
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-[#a93620] to-[#881f0b] text-white py-12">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold mb-3">Jadwal Posyandu</h1>
+            <p class="text-[#ffb4a5] text-lg">Informasi jadwal kegiatan posyandu terdekat</p>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-4 py-12">
+
+        <!-- Filter Bulan -->
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-8 fade-in">
+            <form method="get" class="flex flex-wrap gap-4 items-end justify-center">
+                <div>
+                    <label class="block text-sm font-medium text-[#58413d] mb-1">Bulan</label>
+                    <select name="bulan" class="px-4 py-2 border border-[#dfbfb9] rounded-xl focus:ring-2 focus:ring-[#a93620] outline-none">
+                        {% for b in bulan_list %}
+                        <option value="{{ b.0 }}" {% if bulan == b.0 %}selected{% endif %}>{{ b.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-[#58413d] mb-1">Tahun</label>
+                    <select name="tahun" class="px-4 py-2 border border-[#dfbfb9] rounded-xl focus:ring-2 focus:ring-[#a93620] outline-none">
+                        {% for t in tahun_list %}
+                        <option value="{{ t }}" {% if tahun == t %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <button type="submit" class="bg-[#a93620] text-white px-6 py-2 rounded-xl hover:bg-[#881f0b] transition">Filter</button>
+                </div>
+                <div>
+                    <a href="{% url 'publik:jadwal_posyandu' %}" class="px-6 py-2 border border-[#dfbfb9] rounded-xl hover:bg-gray-50 transition inline-block">Reset</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Jadwal Hari Ini / Sedang Berlangsung -->
+        {% if jadwal_berlangsung %}
+        <div class="mb-8 fade-in">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-[#a93620]">schedule</span>
+                <h2 class="text-xl font-bold text-[#1c1c19]">Sedang Berlangsung</h2>
+                <span class="badge-berlangsung">Hari Ini</span>
+            </div>
+            <div class="grid gap-4">
+                {% for j in jadwal_berlangsung %}
+                <div class="bg-white rounded-xl border-l-4 border-green-500 shadow-sm p-5">
+                    <div class="flex flex-wrap justify-between items-start gap-3">
+                        <div>
+                            <h3 class="text-lg font-semibold text-[#1c1c19]">{{ j.nama_kegiatan }}</h3>
+                            <p class="text-sm text-[#58413d] mt-1">{{ j.get_jenis_kegiatan_display }}</p>
+                            <div class="flex flex-wrap gap-4 mt-2 text-sm text-[#58413d]">
+                                <span class="flex items-center gap-1">📅 {{ j.tanggal|date:"d M Y" }}</span>
+                                <span class="flex items-center gap-1">⏰ {{ j.waktu_mulai|time:"H:i" }} - {{ j.waktu_selesai|time:"H:i" }}</span>
+                                <span class="flex items-center gap-1">📍 {{ j.tempat }}</span>
+                            </div>
+                        </div>
+                        <span class="badge-berlangsung">🟢 Sedang Berlangsung</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Jadwal Mendatang -->
+        <div class="mb-8 fade-in">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-[#a93620]">event_upcoming</span>
+                <h2 class="text-xl font-bold text-[#1c1c19]">Jadwal Mendatang</h2>
+            </div>
+            {% if jadwal_mendatang %}
+            <div class="grid md:grid-cols-2 gap-4">
+                {% for j in jadwal_mendatang %}
+                <div class="bg-white rounded-xl border border-[#e5e2dd] p-4 hover:shadow-md transition">
+                    <div class="flex items-start gap-3">
+                        <div class="min-w-[60px] text-center">
+                            <div class="bg-[#ffdad3] rounded-lg p-2">
+                                <p class="text-xs font-bold text-[#a93620]">{{ j.tanggal|date:"M"|upper }}</p>
+                                <p class="text-2xl font-bold text-[#a93620]">{{ j.tanggal|date:"d" }}</p>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-[#1c1c19]">{{ j.nama_kegiatan }}</h3>
+                            <p class="text-sm text-[#58413d]">{{ j.get_jenis_kegiatan_display }}</p>
+                            <div class="flex flex-wrap gap-3 mt-2 text-xs text-[#58413d]">
+                                <span>🕐 {{ j.waktu_mulai|time:"H:i" }} - {{ j.waktu_selesai|time:"H:i" }}</span>
+                                <span>📍 {{ j.tempat }}</span>
+                            </div>
+                            {% if j.petugas %}
+                            <p class="text-xs text-[#8c716b] mt-1">👤 Petugas: {{ j.petugas }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-white rounded-xl border border-[#e5e2dd] p-8 text-center">
+                <span class="material-symbols-outlined text-4xl text-gray-300">event_busy</span>
+                <p class="text-[#58413d] mt-2">Belum ada jadwal mendatang.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Jadwal Bulan Ini -->
+        <div class="fade-in">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-[#a93620]">calendar_month</span>
+                <h2 class="text-xl font-bold text-[#1c1c19]">Jadwal Bulan Ini</h2>
+                <span class="text-sm text-[#58413d]">{{ today|date:"F Y" }}</span>
+            </div>
+            <div class="bg-white rounded-xl border border-[#e5e2dd] overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-[#f0ede9]">
+                            <tr>
+                                <th class="px-4 py-3 text-xs font-semibold text-[#58413d] uppercase">Tanggal</th>
+                                <th class="px-4 py-3 text-xs font-semibold text-[#58413d] uppercase">Nama Kegiatan</th>
+                                <th class="px-4 py-3 text-xs font-semibold text-[#58413d] uppercase">Jenis</th>
+                                <th class="px-4 py-3 text-xs font-semibold text-[#58413d] uppercase">Waktu</th>
+                                <th class="px-4 py-3 text-xs font-semibold text-[#58413d] uppercase">Tempat</th>
+                                <th class="px-4 py-3 text-xs font-semibold text-[#58413d] uppercase">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#e5e2dd]">
+                            {% for j in jadwal_bulan_ini %}
+                            <tr class="hover:bg-[#f6f3ee] transition">
+                                <td class="px-4 py-3 text-sm">{{ j.tanggal|date:"d/m/Y" }}</td>
+                                <td class="px-4 py-3 text-sm font-medium">{{ j.nama_kegiatan }}</td>
+                                <td class="px-4 py-3 text-sm">{{ j.get_jenis_kegiatan_display }}</td>
+                                <td class="px-4 py-3 text-sm">{{ j.waktu_mulai|time:"H:i" }} - {{ j.waktu_selesai|time:"H:i" }}</td>
+                                <td class="px-4 py-3 text-sm">{{ j.tempat }}</td>
+                                <td class="px-4 py-3">
+                                    {% if j.tanggal < today %}
+                                        <span class="badge-terlewat">Selesai</span>
+                                    {% elif j.tanggal == today %}
+                                        <span class="badge-berlangsung">Hari Ini</span>
+                                    {% else %}
+                                        <span class="badge-mendatang">Akan Datang</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="px-4 py-8 text-center text-[#58413d]">Belum ada jadwal bulan ini.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informasi Penting -->
+        <div class="mt-8 bg-[#cfe1f8]/30 rounded-xl p-5">
+            <div class="flex items-start gap-3">
+                <span class="material-symbols-outlined text-[#4f6073]">info</span>
+                <div class="text-sm text-[#58413d]">
+                    <p class="font-semibold mb-1">Informasi Penting</p>
+                    <ul class="list-disc list-inside space-y-1 text-xs">
+                        <li>Jadwal dapat berubah sewaktu-waktu, hubungi kader posyandu untuk konfirmasi</li>
+                        <li>Bawa buku KIA dan kartu menuju sehat (KMS) saat datang ke posyandu</li>
+                        <li>Pastikan anak dalam keadaan sehat saat imunisasi</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer (Sama dengan Home) -->
+    <footer class="bg-white border-t border-[#e5e2dd] py-12 mt-12">
+        <div class="max-w-[1440px] mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="material-symbols-outlined text-[#a93620] text-2xl">health_and_safety</span>
+                        <h3 class="text-xl font-bold text-[#a93620]">SIPOS</h3>
+                    </div>
+                    <p class="text-sm text-[#58413d]">
+                        Sistem Informasi Posyandu untuk memudahkan pemantauan tumbuh kembang balita.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-[#1c1c19] mb-4">Tautan Cepat</h4>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-sm text-[#58413d] hover:text-[#a93620] transition">Beranda</a></li>
+                        <li><a href="/publik/jadwal-posyandu/" class="text-sm text-[#58413d] hover:text-[#a93620] transition">Jadwal Posyandu</a></li>
+                        <li><a href="/publik/cek-status/" class="text-sm text-[#58413d] hover:text-[#a93620] transition">Cek Status Gizi</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-[#1c1c19] mb-4">Layanan</h4>
+                    <ul class="space-y-2">
+                        <li><a href="{% url 'login' %}" class="text-sm text-[#58413d] hover:text-[#a93620] transition">Login</a></li>
+                        <li><a href="{% url 'register' %}" class="text-sm text-[#58413d] hover:text-[#a93620] transition">Daftar</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-[#1c1c19] mb-4">Kontak</h4>
+                    <ul class="space-y-2">
+                        <li class="text-sm text-[#58413d]">Email: info@sipos.com</li>
+                        <li class="text-sm text-[#58413d]">Telp: (021) 1234 5678</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-[#e5e2dd] mt-8 pt-8 text-center">
+                <p class="text-xs text-[#58413d]">© {% now "Y" %} SIPOS - Sistem Informasi Posyandu Terintegrasi</p>
+                <p class="text-xs text-[#8c716b] mt-1">Warm Management System | Jadwal Posyandu</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

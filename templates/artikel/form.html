@@ -1,0 +1,447 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if artikel %}Edit Artikel{% else %}Tambah Artikel{% endif %} - SIPOS</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif; }
+        body { background-color: #fcf9f4; }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #e5e2dd; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #a93620; border-radius: 10px; }
+        
+        .sidebar-item {
+            transition: all 0.2s ease;
+            border-radius: 12px;
+        }
+        .sidebar-item:hover {
+            background-color: #f6f3ee;
+            color: #a93620;
+        }
+        .sidebar-item.active {
+            background-color: #f26b50;
+            color: #ffffff;
+        }
+        .sidebar-item.active .material-symbols-outlined {
+            color: #ffffff;
+        }
+        
+        .btn-primary {
+            background-color: #a93620;
+            color: white;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #881f0b;
+            transform: scale(0.98);
+        }
+        
+        .btn-secondary {
+            background-color: #e5e2dd;
+            color: #1c1c19;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #d5d2cd;
+        }
+        
+        .form-input {
+            border-radius: 12px;
+            border: 1px solid #dfbfb9;
+            transition: all 0.2s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #a93620;
+            box-shadow: 0 0 0 3px rgba(169, 54, 32, 0.2);
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1c1c19;
+            margin-bottom: 6px;
+            display: block;
+        }
+        
+        .required-star {
+            color: #ba1a1a;
+            margin-left: 4px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        
+        .error-message {
+            color: #ba1a1a;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        
+        /* Styling untuk textarea konten */
+        #konten {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body class="bg-[#fcf9f4]">
+
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col h-screen w-[280px] fixed left-0 top-0 bg-white border-r border-[#dfbfb9] z-40 shadow-sm">
+        <div class="px-6 py-8 border-b border-[#e5e2dd]">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#a93620] text-3xl">health_and_safety</span>
+                <div>
+                    <h1 class="text-2xl font-bold text-[#a93620]">SIPOS</h1>
+                    <p class="text-xs text-[#58413d] mt-0.5">Sistem Informasi Posyandu</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
+            <a href="{% url 'dashboard' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="text-sm font-semibold">Dashboard</span>
+            </a>
+            <a href="{% url 'balita:balita_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">child_care</span>
+                <span class="text-sm font-medium">Data Balita</span>
+            </a>
+            <a href="{% url 'penimbangan:penimbangan_create' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">straighten</span>
+                <span class="text-sm font-medium">Input Pengukuran</span>
+            </a>
+            <a href="{% url 'penimbangan:penimbangan_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">monitor_weight</span>
+                <span class="text-sm font-medium">Data Penimbangan</span>
+            </a>
+            <a href="{% url 'imunisasi:imunisasi_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">vaccines</span>
+                <span class="text-sm font-medium">Imunisasi</span>
+            </a>
+            <a href="{% url 'jadwal:jadwal_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span class="text-sm font-medium">Jadwal Posyandu</span>
+            </a>
+            <a href="{% url 'artikel:artikel_list' %}" class="sidebar-item active flex items-center gap-3 px-4 py-3 transition-all bg-[#f26b50] text-white">
+                <span class="material-symbols-outlined">article</span>
+                <span class="text-sm font-medium">Artikel Edukasi</span>
+            </a>
+            <a href="{% url 'laporan:laporan_index' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">assessment</span>
+                <span class="text-sm font-medium">Laporan</span>
+            </a>
+
+            {% if user.is_staff %}
+            <a href="#" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">admin_panel_settings</span>
+                <span class="text-sm font-medium">Manajemen Kader</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <div class="px-4 py-6 border-t border-[#e5e2dd] space-y-1">
+            <a href="{% url 'pengaturan' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-[#1c1c19] hover:bg-[#f6f3ee] hover:text-[#a93620]">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-sm font-medium">Pengaturan</span>
+            </a>
+            <form method="post" action="{% url 'logout' %}" class="w-full">
+                {% csrf_token %}
+                <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all text-[#ba1a1a] hover:bg-[#ffdad6]">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="text-sm font-medium">Keluar</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 md:ml-[280px] min-h-screen">
+        <header class="sticky top-0 z-30 bg-[#fcf9f4]/95 backdrop-blur-md shadow-sm border-b border-[#dfbfb9]">
+            <div class="flex justify-between items-center px-6 py-4">
+                <button id="sidebarToggle" class="md:hidden p-2 rounded-lg text-[#58413d] hover:bg-[#f6f3ee]">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="flex items-center gap-4 flex-1 max-w-md">
+                    <div class="relative w-full">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#58413d]">search</span>
+                        <input type="text" placeholder="Cari data..." 
+                               class="w-full pl-10 pr-4 py-2.5 bg-white border border-[#dfbfb9] rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none text-sm transition-all">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="relative p-2 rounded-full text-[#58413d] hover:bg-[#f6f3ee] transition-colors">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#ba1a1a] rounded-full border-2 border-[#fcf9f4]"></span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-3 border-l border-[#dfbfb9]">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold text-[#1c1c19]">{{ user.get_full_name|default:user.username }}</p>
+                            <p class="text-xs text-[#58413d]">Kader Posyandu</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-[#f26b50] flex items-center justify-center text-white font-bold shadow-sm">
+                            {{ user.first_name|slice:":1"|default:user.username|slice:":1"|upper }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="px-6 py-6">
+            <div class="max-w-5xl mx-auto fade-in">
+
+                <!-- Header -->
+                <div class="flex items-center gap-4 mb-6">
+                    <a href="{% url 'artikel:artikel_list' %}" class="text-[#a93620] hover:text-[#881f0b] transition">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </a>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-[#1c1c19]">
+                            {% if artikel %}Edit Artikel{% else %}Tambah Artikel Baru{% endif %}
+                        </h1>
+                        <p class="text-sm text-[#58413d] mt-1">
+                            {% if artikel %}Perbaharui informasi artikel{% else %}Bagikan informasi edukasi untuk pengguna{% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700 border border-red-200{% else %}bg-green-100 text-green-700 border border-green-200{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Form Card -->
+                <div class="bg-white rounded-2xl border border-[#e5e2dd] shadow-sm overflow-hidden">
+                    <form method="post" id="artikelForm" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Form Body -->
+                        <div class="p-6 md:p-8">
+                            <!-- Info Section -->
+                            <div class="mb-6 pb-4 border-b border-[#e5e2dd]">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[#a93620]">article</span>
+                                    <h2 class="text-lg font-semibold text-[#1c1c19]">Informasi Artikel</h2>
+                                </div>
+                                <p class="text-sm text-[#58413d] mt-1">Isi data artikel dengan lengkap dan informatif</p>
+                            </div>
+
+                            <div class="space-y-6">
+                                <!-- Judul Artikel -->
+                                <div>
+                                    <label class="form-label">
+                                        Judul Artikel <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">title</span>
+                                        <input type="text" name="judul" id="judul" value="{{ artikel.judul|default:'' }}" required
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="Masukkan judul artikel yang menarik">
+                                    </div>
+                                    <div class="error-message" id="error-judul"></div>
+                                </div>
+
+                                <!-- Kategori -->
+                                <div>
+                                    <label class="form-label">
+                                        Kategori <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">category</span>
+                                        <select name="kategori" id="kategori" required
+                                                class="form-input w-full pl-10 pr-10 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all appearance-none bg-white">
+                                            <option value="">-- Pilih Kategori --</option>
+                                            {% for kat in categories %}
+                                            <option value="{{ kat.0 }}" {% if artikel.kategori == kat.0 %}selected{% endif %}>{{ kat.1 }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">expand_more</span>
+                                    </div>
+                                    <div class="error-message" id="error-kategori"></div>
+                                </div>
+
+                                <!-- Ringkasan -->
+                                <div>
+                                    <label class="form-label">Ringkasan</label>
+                                    <div class="relative">
+                                        <textarea name="ringkasan" id="ringkasan" rows="3"
+                                                  class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all resize-none"
+                                                  placeholder="Ringkasan singkat artikel (akan ditampilkan di card)">{{ artikel.ringkasan|default:'' }}</textarea>
+                                    </div>
+                                    <p class="text-xs text-[#8c716b] mt-1">Opsional, jika kosong akan diambil dari awal konten</p>
+                                </div>
+
+                                <!-- Konten Artikel (Textarea biasa) -->
+                                <div>
+                                    <label class="form-label">
+                                        Konten Artikel <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-3 text-[#8c716b] text-lg">description</span>
+                                        <textarea name="konten" id="konten" rows="15" required
+                                                  class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all resize-y"
+                                                  placeholder="Tulis konten artikel di sini...&#10;&#10;Tips:&#10;- Gunakan bahasa yang mudah dipahami&#10;- Buat paragraf pendek agar mudah dibaca&#10;- Sertakan data atau sumber terpercaya">{{ artikel.konten|default:'' }}</textarea>
+                                    </div>
+                                    <div class="error-message" id="error-konten"></div>
+                                    <p class="text-xs text-[#8c716b] mt-1">Gunakan enter untuk membuat paragraf baru</p>
+                                </div>
+
+                                <!-- Tags -->
+                                <div>
+                                    <label class="form-label">Tags</label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">sell</span>
+                                        <input type="text" name="tags" id="tags" value="{{ artikel.tags|default:'' }}"
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="Pisahkan dengan koma, contoh: kesehatan, balita, gizi">
+                                    </div>
+                                    <p class="text-xs text-[#8c716b] mt-1">Tags memudahkan pencarian artikel</p>
+                                </div>
+
+                                <!-- Status -->
+                                <div>
+                                    <label class="form-label">Status</label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">visibility</span>
+                                        <select name="status" id="status"
+                                                class="form-input w-full pl-10 pr-10 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all appearance-none bg-white">
+                                            <option value="published" {% if artikel.status == 'published' or not artikel %}selected{% endif %}>📢 Published (Langsung Terbit)</option>
+                                            <option value="draft" {% if artikel.status == 'draft' %}selected{% endif %}>📝 Draft (Simpan sebagai konsep)</option>
+                                        </select>
+                                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">expand_more</span>
+                                    </div>
+                                    <p class="text-xs text-[#8c716b] mt-1">Draft hanya bisa dilihat oleh admin/kader, Published akan langsung tampil</p>
+                                </div>
+                            </div>
+
+                            <!-- Tips Menulis -->
+                            <div class="mt-8 p-4 bg-[#f6f3ee] rounded-xl border border-[#e5e2dd]">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-[#a93620]">tips_and_updates</span>
+                                    <h3 class="font-semibold text-[#1c1c19]">Tips Menulis Artikel</h3>
+                                </div>
+                                <ul class="text-sm text-[#58413d] space-y-1 list-disc list-inside">
+                                    <li>Gunakan bahasa yang mudah dipahami oleh masyarakat umum</li>
+                                    <li>Sertakan data atau sumber terpercaya untuk informasi kesehatan</li>
+                                    <li>Buat paragraf pendek agar mudah dibaca (3-4 kalimat per paragraf)</li>
+                                    <li>Gunakan subjudul dengan format <strong>**Subjudul**</strong> untuk memisahkan topik</li>
+                                    <li>Sertakan kata kunci yang relevan untuk memudahkan pencarian</li>
+                                    <li>Baca ulang artikel sebelum dipublikasikan</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="px-6 md:px-8 py-4 bg-[#f6f3ee] border-t border-[#e5e2dd] flex flex-col sm:flex-row justify-end gap-3">
+                            <a href="{% url 'artikel:artikel_list' %}" class="btn-secondary px-6 py-2.5 rounded-xl font-semibold text-center">
+                                Batal
+                            </a>
+                            <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-base">save</span>
+                                <span>{% if artikel %}Simpan Perubahan{% else %}Publikasikan Artikel{% endif %}</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Informasi Penting -->
+                <div class="mt-6 p-4 bg-[#cfe1f8]/30 rounded-xl border border-[#cfe1f8]">
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-[#4f6073]">info</span>
+                        <div class="text-sm text-[#58413d]">
+                            <p class="font-semibold mb-1">Informasi Penting:</p>
+                            <ul class="list-disc list-inside space-y-1 text-xs">
+                                <li>Field dengan tanda <span class="text-red-500">*</span> wajib diisi</li>
+                                <li>Artikel yang sudah dipublikasikan akan langsung muncul di halaman utama artikel</li>
+                                <li>Gunakan fitur Draft jika artikel belum selesai dan ingin dilanjutkan nanti</li>
+                                <li>Artikel yang sudah dipublikasikan dapat diedit kapan saja</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sidebar toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('aside');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('hidden');
+            });
+        }
+
+        // Form validation
+        const form = document.getElementById('artikelForm');
+        
+        function validateForm() {
+            let isValid = true;
+            
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(el => el.innerHTML = '');
+            document.querySelectorAll('.form-input').forEach(el => el.classList.remove('border-red-500'));
+            
+            // Validate judul
+            const judul = document.getElementById('judul');
+            if (!judul.value.trim()) {
+                document.getElementById('error-judul').innerHTML = 'Judul artikel harus diisi';
+                judul.classList.add('border-red-500');
+                isValid = false;
+            }
+            
+            // Validate kategori
+            const kategori = document.getElementById('kategori');
+            if (!kategori.value) {
+                document.getElementById('error-kategori').innerHTML = 'Pilih kategori artikel';
+                kategori.classList.add('border-red-500');
+                isValid = false;
+            }
+            
+            // Validate konten
+            const konten = document.getElementById('konten');
+            if (!konten.value.trim()) {
+                document.getElementById('error-konten').innerHTML = 'Konten artikel harus diisi';
+                konten.classList.add('border-red-500');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (!validateForm()) {
+                    e.preventDefault();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

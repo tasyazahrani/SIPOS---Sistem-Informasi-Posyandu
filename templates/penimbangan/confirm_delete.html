@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hapus Penimbangan - SIPOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+</head>
+<body class="bg-[#fcf9f4]">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white rounded-xl border border-[#e5e2dd] p-6">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-red-500 text-3xl">warning</span>
+                </div>
+                <h3 class="text-xl font-bold text-[#1c1c19] mb-2">Konfirmasi Hapus</h3>
+                <p class="text-[#58413d] mb-6">
+                    Apakah Anda yakin ingin menghapus data penimbangan ini?
+                </p>
+                <div class="flex gap-3 justify-center">
+                    <a href="{% url 'penimbangan:penimbangan_list' %}" class="px-5 py-2 border border-[#dfbfb9] rounded-xl text-[#58413d] hover:bg-[#f6f3ee] transition">
+                        Batal
+                    </a>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="px-5 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition">
+                            Ya, Hapus
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hapus Penimbangan - SIPOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+</head>
+<body class="bg-[#fcf9f4]">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white rounded-xl border border-[#e5e2dd] p-6">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-red-500 text-3xl">warning</span>
+                </div>
+                <h3 class="text-xl font-bold text-[#1c1c19] mb-2">Konfirmasi Hapus</h3>
+                <p class="text-[#58413d] mb-6">
+                    Apakah Anda yakin ingin menghapus data penimbangan ini?
+                </p>
+                <div class="flex gap-3 justify-center">
+                    <a href="{% url 'penimbangan:penimbangan_list' %}" class="px-5 py-2 border border-[#dfbfb9] rounded-xl text-[#58413d] hover:bg-[#f6f3ee] transition">
+                        Batal
+                    </a>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="px-5 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition">
+                            Ya, Hapus
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

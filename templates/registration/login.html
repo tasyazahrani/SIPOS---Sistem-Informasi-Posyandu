@@ -1,0 +1,295 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SIPOS</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #a93620 0%, #881f0b 100%);
+            min-height: 100vh;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #a93620;
+            box-shadow: 0 0 0 3px rgba(169, 54, 32, 0.2);
+        }
+        
+        .role-tab {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        .role-tab.active {
+            border-bottom-color: #a93620;
+            color: #a93620;
+        }
+        .role-tab.active .material-symbols-outlined {
+            color: #a93620;
+        }
+        .role-tab:hover:not(.active) {
+            border-bottom-color: #dfbfb9;
+            color: #58413d;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 md:p-8">
+
+    <div class="max-w-6xl w-full">
+        <!-- Layout 2 Kolom -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- KOLOM KIRI - Informasi & Brand -->
+            <div class="flex flex-col justify-center text-white">
+                <div class="mb-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center">
+                            <span class="material-symbols-outlined text-3xl">health_and_safety</span>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold">SIPOS</h1>
+                            <p class="text-[#ffb4a5] text-sm">Sistem Informasi Posyandu</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                    Selamat Datang <span class="text-[#ffb4a5]">Kembali</span>
+                </h2>
+                <p class="text-[#ffb4a5] text-lg mb-6 leading-relaxed">
+                    Masuk ke akun Anda untuk memantau tumbuh kembang balita dan mengelola data posyandu.
+                </p>
+
+                <!-- Feature List -->
+                <div class="space-y-4 mt-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-sm">check_circle</span>
+                        </div>
+                        <span>Pantau tumbuh kembang balita</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-sm">check_circle</span>
+                        </div>
+                        <span>Catat imunisasi dan penimbangan</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-sm">check_circle</span>
+                        </div>
+                        <span>Dapatkan artikel edukasi kesehatan</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-sm">check_circle</span>
+                        </div>
+                        <span>Laporan otomatis dan mudah dibaca</span>
+                    </div>
+                </div>
+
+                <!-- Testimonial Mini -->
+                <div class="mt-8 p-4 bg-white/10 rounded-xl">
+                    <div class="flex items-center gap-3">
+                        <div class="flex -space-x-2">
+                            <div class="w-8 h-8 rounded-full bg-[#ffdad3] flex items-center justify-center text-[#a93620] font-bold text-xs border-2 border-white">A</div>
+                            <div class="w-8 h-8 rounded-full bg-[#cfe1f8] flex items-center justify-center text-[#4f6073] font-bold text-xs border-2 border-white">S</div>
+                            <div class="w-8 h-8 rounded-full bg-[#c0ecda] flex items-center justify-center text-[#3e6658] font-bold text-xs border-2 border-white">R</div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">"SIPOS sangat membantu kerja kami sebagai kader posyandu!"</p>
+                            <p class="text-xs text-[#ffb4a5]">- Kader Posyandu Kemuning</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KOLOM KANAN - Form Login -->
+            <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8">
+                <div class="flex items-center gap-2 mb-6 pb-2 border-b border-gray-200">
+                    <span class="material-symbols-outlined text-[#a93620]">login</span>
+                    <h2 class="text-xl font-bold text-gray-800">Masuk ke Akun</h2>
+                </div>
+
+                <!-- Pilihan Role Login -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">
+                        Masuk Sebagai
+                    </label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Role Orang Tua -->
+                        <div id="role-ortu" class="role-tab active text-center py-3 px-4 rounded-xl cursor-pointer transition-all bg-[#fff5f2] border border-[#a93620]">
+                            <div class="flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-[#a93620]">family_history</span>
+                                <span class="font-semibold text-[#a93620]">Orang Tua</span>
+                            </div>
+                            <p class="text-xs text-[#58413d] mt-1">Pantau tumbuh kembang anak</p>
+                        </div>
+                        
+                        <!-- Role Kader -->
+                        <div id="role-kader" class="role-tab text-center py-3 px-4 rounded-xl cursor-pointer transition-all border border-gray-200 hover:border-[#a93620]">
+                            <div class="flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-gray-500">badge</span>
+                                <span class="font-semibold text-gray-600">Kader</span>
+                            </div>
+                            <p class="text-xs text-[#58413d] mt-1">Kelola data posyandu</p>
+                        </div>
+                    </div>
+                    <input type="hidden" name="login_role" id="login_role" value="ortu">
+                </div>
+
+                <!-- Pesan Error/Success -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="mb-4 p-3 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700 border border-red-200{% else %}bg-green-100 text-green-700 border border-green-200{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Form Login -->
+                <form method="post" action="{% url 'login' %}" id="loginForm">
+                    {% csrf_token %}
+                    
+                    <!-- Username -->
+                    <div class="mb-4">
+                        <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Username <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">person</span>
+                            <input type="text" name="username" id="username" required
+                                   class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-[#a93620] focus:ring-2 focus:ring-[#a93620]/20 transition-all"
+                                   placeholder="Masukkan username Anda">
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-4">
+                        <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Password <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">lock</span>
+                            <input type="password" name="password" id="password" required
+                                   class="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:border-[#a93620] focus:ring-2 focus:ring-[#a93620]/20 transition-all"
+                                   placeholder="Masukkan password Anda">
+                            <button type="button" onclick="togglePassword('password')" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                <span class="material-symbols-outlined text-lg">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="flex justify-between items-center mb-6">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="remember" class="w-4 h-4 text-[#a93620] border-gray-300 rounded focus:ring-[#a93620]">
+                            <span class="text-sm text-gray-600">Ingat saya</span>
+                        </label>
+                        <a href="#" class="text-sm text-[#a93620] hover:underline">Lupa password?</a>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full bg-[#a93620] hover:bg-[#881f0b] text-white font-semibold py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-md">
+                        <span class="material-symbols-outlined">login</span>
+                        <span>Login</span>
+                    </button>
+
+                    <!-- Link Register -->
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-600">
+                            Belum punya akun?
+                            <a href="{% url 'register' %}" class="text-[#a93620] font-semibold hover:underline">
+                                Daftar di sini
+                            </a>
+                        </p>
+                    </div>
+
+                    <!-- Informasi Role -->
+                    <div class="mt-6 p-3 bg-gray-50 rounded-lg text-center">
+                        <p class="text-xs text-gray-500">
+                            <span class="material-symbols-outlined text-xs align-middle">info</span>
+                            Pastikan Anda memilih role yang sesuai dengan akun Anda
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-8">
+            <p class="text-xs text-[#ffb4a5]">© {% now "Y" %} SIPOS - Sistem Informasi Posyandu Terintegrasi</p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword(fieldId) {
+            var field = document.getElementById(fieldId);
+            if (field.type === 'password') {
+                field.type = 'text';
+            } else {
+                field.type = 'password';
+            }
+        }
+
+        // Role selection
+        const roleOrtu = document.getElementById('role-ortu');
+        const roleKader = document.getElementById('role-kader');
+        const loginRole = document.getElementById('login_role');
+
+        roleOrtu.addEventListener('click', function() {
+            // Update active class
+            roleOrtu.classList.add('active');
+            roleOrtu.classList.add('bg-[#fff5f2]', 'border-[#a93620]');
+            roleOrtu.classList.remove('border-gray-200');
+            roleOrtu.querySelector('span:first-child').classList.add('text-[#a93620]');
+            roleOrtu.querySelector('span:first-child').classList.remove('text-gray-500');
+            roleOrtu.querySelector('.font-semibold').classList.add('text-[#a93620]');
+            roleOrtu.querySelector('.font-semibold').classList.remove('text-gray-600');
+            
+            roleKader.classList.remove('active');
+            roleKader.classList.remove('bg-[#fff5f2]', 'border-[#a93620]');
+            roleKader.classList.add('border-gray-200');
+            roleKader.querySelector('span:first-child').classList.remove('text-[#a93620]');
+            roleKader.querySelector('span:first-child').classList.add('text-gray-500');
+            roleKader.querySelector('.font-semibold').classList.remove('text-[#a93620]');
+            roleKader.querySelector('.font-semibold').classList.add('text-gray-600');
+            
+            loginRole.value = 'ortu';
+        });
+
+        roleKader.addEventListener('click', function() {
+            // Update active class
+            roleKader.classList.add('active');
+            roleKader.classList.add('bg-[#fff5f2]', 'border-[#a93620]');
+            roleKader.classList.remove('border-gray-200');
+            roleKader.querySelector('span:first-child').classList.add('text-[#a93620]');
+            roleKader.querySelector('span:first-child').classList.remove('text-gray-500');
+            roleKader.querySelector('.font-semibold').classList.add('text-[#a93620]');
+            roleKader.querySelector('.font-semibold').classList.remove('text-gray-600');
+            
+            roleOrtu.classList.remove('active');
+            roleOrtu.classList.remove('bg-[#fff5f2]', 'border-[#a93620]');
+            roleOrtu.classList.add('border-gray-200');
+            roleOrtu.querySelector('span:first-child').classList.remove('text-[#a93620]');
+            roleOrtu.querySelector('span:first-child').classList.add('text-gray-500');
+            roleOrtu.querySelector('.font-semibold').classList.remove('text-[#a93620]');
+            roleOrtu.querySelector('.font-semibold').classList.add('text-gray-600');
+            
+            loginRole.value = 'kader';
+        });
+    </script>
+</body>
+</html>

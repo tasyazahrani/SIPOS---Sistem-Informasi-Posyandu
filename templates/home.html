@@ -1,0 +1,533 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIPOS - Sistem Informasi Posyandu</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        body {
+            background-color: #fcf9f4;
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .btn-primary {
+            background-color: #a93620;
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #881f0b;
+            transform: scale(0.98);
+        }
+        
+        .btn-outline {
+            border: 2px solid #a93620;
+            color: #a93620;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-outline:hover {
+            background-color: #a93620;
+            color: #ffffff;
+            transform: scale(0.98);
+        }
+        
+        .feature-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e5e2dd;
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(169, 54, 32, 0.1);
+        }
+        
+        .stat-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            border-left: 6px solid #a93620;
+            transition: all 0.3s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .hero-badge {
+            animation: pulse 2s infinite;
+        }
+        
+        .public-card {
+            transition: all 0.3s ease;
+        }
+        .public-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(169, 54, 32, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-[#fcf9f4]">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-[#fcf9f4]/95 backdrop-blur-md border-b border-[#dfbfb9]">
+        <div class="max-w-[1440px] mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[#a93620] text-3xl">health_and_safety</span>
+                    <div>
+                        <h1 class="text-2xl font-bold text-[#a93620]">SIPOS</h1>
+                        <p class="text-xs text-[#58413d]">Sistem Informasi Posyandu</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#home" class="text-[#1c1c19] hover:text-[#a93620] transition font-medium">Beranda</a>
+                    <a href="#features" class="text-[#1c1c19] hover:text-[#a93620] transition font-medium">Fitur</a>
+                    <a href="#layanan-publik" class="text-[#1c1c19] hover:text-[#a93620] transition font-medium">Layanan Publik</a>
+                    <a href="#about" class="text-[#1c1c19] hover:text-[#a93620] transition font-medium">Tentang</a>
+                    <a href="#statistics" class="text-[#1c1c19] hover:text-[#a93620] transition font-medium">Statistik</a>
+                </div>
+
+                <!-- Login Button -->
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'login' %}" class="btn-outline px-5 py-2 rounded-xl font-semibold hidden md:block">
+                        Login
+                    </a>
+                    <a href="{% url 'register' %}" class="btn-primary px-5 py-2 rounded-xl font-semibold">
+                        Daftar Sekarang
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative overflow-hidden">
+        <div class="max-w-[1440px] mx-auto px-6 py-16 md:py-24">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center fade-in-up">
+                <!-- Left Content -->
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-[#ffdad3] px-4 py-2 rounded-full mb-6 hero-badge">
+                        <span class="material-symbols-outlined text-[#a93620] text-sm">stars</span>
+                        <span class="text-sm font-semibold text-[#a93620]">Solusi Posyandu Digital</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1c1c19] leading-tight">
+                        Pantau Tumbuh Kembang
+                        <span class="text-[#a93620]">Balita</span>
+                        dengan Mudah
+                    </h1>
+                    <p class="text-lg text-[#58413d] mt-6 leading-relaxed">
+                        SIPOS membantu kader posyandu dalam memantau pertumbuhan balita, 
+                        mencatat imunisasi, dan menghasilkan laporan kesehatan secara digital.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                        <a href="{% url 'register' %}" class="btn-primary px-8 py-3 rounded-xl font-semibold text-center">
+                            Mulai Sekarang
+                            <span class="material-symbols-outlined text-base ml-1 align-middle">arrow_forward</span>
+                        </a>
+                        <a href="#features" class="btn-outline px-8 py-3 rounded-xl font-semibold text-center">
+                            Lihat Fitur
+                        </a>
+                    </div>
+                    
+                    <!-- Testimonial Mini -->
+                    <div class="flex items-center gap-4 mt-8 pt-6 border-t border-[#e5e2dd]">
+                        <div class="flex -space-x-2">
+                            <div class="w-10 h-10 rounded-full bg-[#ffdad3] flex items-center justify-center text-[#a93620] font-bold border-2 border-white">A</div>
+                            <div class="w-10 h-10 rounded-full bg-[#cfe1f8] flex items-center justify-center text-[#4f6073] font-bold border-2 border-white">S</div>
+                            <div class="w-10 h-10 rounded-full bg-[#c0ecda] flex items-center justify-center text-[#3e6658] font-bold border-2 border-white">R</div>
+                        </div>
+                        <div>
+                            <p class="text-sm text-[#58413d]">Didukung oleh <span class="font-semibold text-[#1c1c19]">500+ Posyandu</span></p>
+                            <p class="text-xs text-[#8c716b]">di seluruh Indonesia</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Content - Hero Image -->
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-[#ffdad3] to-[#fcf9f4] rounded-2xl p-8">
+                        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600&h=500&fit=crop" 
+                             alt="Kader Posyandu" 
+                             class="rounded-xl shadow-lg w-full object-cover">
+                    </div>
+                    <!-- Floating Card -->
+                    <div class="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-lg p-4 w-48">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-[#c0ecda] rounded-full flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[#3e6658]">child_care</span>
+                            </div>
+                            <div>
+                                <p class="text-xs text-[#58413d]">Balita Terdata</p>
+                                <p class="text-xl font-bold text-[#1c1c19]">1,248</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute -top-6 -right-6 bg-white rounded-xl shadow-lg p-4 w-48">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-[#ffdad3] rounded-full flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[#a93620]">monitor_weight</span>
+                            </div>
+                            <div>
+                                <p class="text-xs text-[#58413d]">Penimbangan</p>
+                                <p class="text-xl font-bold text-[#1c1c19]">2.5k+</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Layanan Publik Section (BARU) -->
+    <section id="layanan-publik" class="py-16 md:py-24 bg-white">
+        <div class="max-w-[1440px] mx-auto px-6">
+            <div class="text-center mb-12">
+                <span class="text-[#a93620] font-semibold text-sm uppercase tracking-wider">Layanan Publik</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-[#1c1c19] mt-2">
+                    Layanan Tanpa Login
+                </h2>
+                <p class="text-lg text-[#58413d] mt-4 max-w-2xl mx-auto">
+                    Akses layanan berikut tanpa perlu login, gratis untuk masyarakat
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Card Cek Status Gizi -->
+                <a href="{% url 'publik:cek_status' %}" class="public-card bg-gradient-to-br from-[#ffdad3] to-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all block">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 bg-[#a93620] rounded-xl flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-3xl">monitor_heart</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-[#1c1c19] mb-2">Cek Status Gizi Balita</h3>
+                            <p class="text-[#58413d] text-sm mb-3">
+                                Masukkan NIK atau nama balita untuk mengetahui status gizi dan rekomendasi kesehatan.
+                            </p>
+                            <div class="flex items-center gap-1 text-[#a93620] font-medium text-sm">
+                                Cek Sekarang 
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card Jadwal Posyandu -->
+                <a href="{% url 'publik:jadwal_posyandu' %}" class="public-card bg-gradient-to-br from-[#cfe1f8] to-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all block">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 bg-[#4f6073] rounded-xl flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-3xl">calendar_month</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-[#1c1c19] mb-2">Jadwal Posyandu</h3>
+                            <p class="text-[#58413d] text-sm mb-3">
+                                Lihat jadwal kegiatan posyandu terdekat, jadwal imunisasi, dan penyuluhan kesehatan.
+                            </p>
+                            <div class="flex items-center gap-1 text-[#a93620] font-medium text-sm">
+                                Lihat Jadwal 
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 md:py-24 bg-[#f6f3ee]">
+        <div class="max-w-[1440px] mx-auto px-6">
+            <div class="text-center mb-12">
+                <span class="text-[#a93620] font-semibold text-sm uppercase tracking-wider">Fitur Unggulan</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-[#1c1c19] mt-2">
+                    Kemudahan dalam Satu Platform
+                </h2>
+                <p class="text-lg text-[#58413d] mt-4 max-w-2xl mx-auto">
+                    SIPOS menyediakan berbagai fitur untuk mendukung kinerja kader posyandu
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card p-6 text-center">
+                    <div class="w-16 h-16 bg-[#ffdad3] rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-[#a93620] text-3xl">child_care</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#1c1c19] mb-2">Data Balita</h3>
+                    <p class="text-[#58413d]">Kelola data balita dengan mudah, termasuk riwayat kesehatan dan tumbuh kembang.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card p-6 text-center">
+                    <div class="w-16 h-16 bg-[#cfe1f8] rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-[#4f6073] text-3xl">monitor_weight</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#1c1c19] mb-2">Input Pengukuran</h3>
+                    <p class="text-[#58413d]">Catat berat badan, tinggi badan, dan status gizi balita secara real-time.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card p-6 text-center">
+                    <div class="w-16 h-16 bg-[#c0ecda] rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-[#3e6658] text-3xl">vaccines</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#1c1c19] mb-2">Jadwal Imunisasi</h3>
+                    <p class="text-[#58413d]">Pantau jadwal imunisasi balita agar tidak terlewat.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card p-6 text-center">
+                    <div class="w-16 h-16 bg-[#e5e2dd] rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-[#58413d] text-3xl">assessment</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#1c1c19] mb-2">Laporan & Statistik</h3>
+                    <p class="text-[#58413d]">Hasilkan laporan otomatis untuk monitoring dan evaluasi program.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card p-6 text-center">
+                    <div class="w-16 h-16 bg-[#ffdad3] rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-[#a93620] text-3xl">article</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#1c1c19] mb-2">Artikel Edukasi</h3>
+                    <p class="text-[#58413d]">Akses artikel tentang kesehatan ibu dan anak terbaru.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card p-6 text-center">
+                    <div class="w-16 h-16 bg-[#cfe1f8] rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <span class="material-symbols-outlined text-[#4f6073] text-3xl">security</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#1c1c19] mb-2">Data Terjamin</h3>
+                    <p class="text-[#58413d]">Sistem keamanan terjamin untuk melindungi data balita.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section id="statistics" class="py-16 md:py-24">
+        <div class="max-w-[1440px] mx-auto px-6">
+            <div class="text-center mb-12">
+                <span class="text-[#a93620] font-semibold text-sm uppercase tracking-wider">Dampak Positif</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-[#1c1c19] mt-2">
+                    Statistik SIPOS
+                </h2>
+                <p class="text-lg text-[#58413d] mt-4 max-w-2xl mx-auto">
+                    Ribuan balita telah merasakan manfaat sistem informasi posyandu ini
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="stat-card bg-white p-6 text-center">
+                    <div class="w-14 h-14 bg-[#ffdad3] rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="material-symbols-outlined text-[#a93620] text-2xl">groups</span>
+                    </div>
+                    <h3 class="text-3xl font-bold text-[#1c1c19]">500+</h3>
+                    <p class="text-sm text-[#58413d] mt-1">Posyandu Mitra</p>
+                </div>
+
+                <div class="stat-card bg-white p-6 text-center">
+                    <div class="w-14 h-14 bg-[#cfe1f8] rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="material-symbols-outlined text-[#4f6073] text-2xl">child_care</span>
+                    </div>
+                    <h3 class="text-3xl font-bold text-[#1c1c19]">10k+</h3>
+                    <p class="text-sm text-[#58413d] mt-1">Balita Terdata</p>
+                </div>
+
+                <div class="stat-card bg-white p-6 text-center">
+                    <div class="w-14 h-14 bg-[#c0ecda] rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="material-symbols-outlined text-[#3e6658] text-2xl">monitor_weight</span>
+                    </div>
+                    <h3 class="text-3xl font-bold text-[#1c1c19]">50k+</h3>
+                    <p class="text-sm text-[#58413d] mt-1">Penimbangan</p>
+                </div>
+
+                <div class="stat-card bg-white p-6 text-center">
+                    <div class="w-14 h-14 bg-[#e5e2dd] rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="material-symbols-outlined text-[#58413d] text-2xl">vaccines</span>
+                    </div>
+                    <h3 class="text-3xl font-bold text-[#1c1c19]">15k+</h3>
+                    <p class="text-sm text-[#58413d] mt-1">Imunisasi</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 md:py-24 bg-[#f6f3ee]">
+        <div class="max-w-[1440px] mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="text-[#a93620] font-semibold text-sm uppercase tracking-wider">Tentang SIPOS</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#1c1c19] mt-2">
+                        Sistem Informasi Posyandu Modern
+                    </h2>
+                    <p class="text-lg text-[#58413d] mt-4 leading-relaxed">
+                        SIPOS hadir sebagai solusi digital untuk memudahkan kader posyandu dalam 
+                        melakukan pencatatan dan pemantauan tumbuh kembang balita.
+                    </p>
+                    <p class="text-[#58413d] mt-4 leading-relaxed">
+                        Dengan sistem ini, data balita tersimpan dengan aman, laporan dapat dihasilkan 
+                        secara otomatis, dan pemantauan status gizi menjadi lebih mudah dan akurat.
+                    </p>
+                    
+                    <div class="flex items-center gap-4 mt-6">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[#a93620]">check_circle</span>
+                            <span class="text-sm text-[#1c1c19]">Mudah Digunakan</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[#a93620]">check_circle</span>
+                            <span class="text-sm text-[#1c1c19]">Data Akurat</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[#a93620]">check_circle</span>
+                            <span class="text-sm text-[#1c1c19]">Laporan Otomatis</span>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'register' %}" class="btn-primary px-8 py-3 rounded-xl font-semibold inline-flex items-center gap-2 mt-8">
+                        Gabung Sekarang
+                        <span class="material-symbols-outlined text-base">arrow_forward</span>
+                    </a>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1584515933487-779824d29309?w=600&h=400&fit=crop" 
+                         alt="Ilustrasi Posyandu" 
+                         class="rounded-xl w-full">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 md:py-24">
+        <div class="max-w-[1440px] mx-auto px-6">
+            <div class="bg-gradient-to-r from-[#a93620] to-[#881f0b] rounded-2xl p-8 md:p-12 text-center text-white">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                    Siap Mengelola Posyandu Digital?
+                </h2>
+                <p class="text-[#ffb4a5] text-lg mb-8 max-w-2xl mx-auto">
+                    Bergabunglah dengan ribuan posyandu yang sudah menggunakan SIPOS
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="{% url 'register' %}" class="bg-white text-[#a93620] hover:bg-[#f6f3ee] font-semibold px-8 py-3 rounded-xl transition-all duration-200 hover:scale-105">
+                        Daftar Sekarang
+                    </a>
+                    <a href="{% url 'login' %}" class="border-2 border-white text-white hover:bg-white hover:text-[#a93620] font-semibold px-8 py-3 rounded-xl transition-all duration-200">
+                        Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-[#e5e2dd] py-12">
+        <div class="max-w-[1440px] mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="material-symbols-outlined text-[#a93620] text-2xl">health_and_safety</span>
+                        <h3 class="text-xl font-bold text-[#a93620]">SIPOS</h3>
+                    </div>
+                    <p class="text-sm text-[#58413d]">
+                        Sistem Informasi Posyandu untuk memudahkan pemantauan tumbuh kembang balita.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-[#1c1c19] mb-4">Tautan Cepat</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-sm text-[#58413d] hover:text-[#a93620] transition">Beranda</a></li>
+                        <li><a href="#features" class="text-sm text-[#58413d] hover:text-[#a93620] transition">Fitur</a></li>
+                        <li><a href="#layanan-publik" class="text-sm text-[#58413d] hover:text-[#a93620] transition">Layanan Publik</a></li>
+                        <li><a href="#about" class="text-sm text-[#58413d] hover:text-[#a93620] transition">Tentang</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-[#1c1c19] mb-4">Layanan</h4>
+                    <ul class="space-y-2">
+                        <li><a href="{% url 'publik:cek_status' %}" class="text-sm text-[#58413d] hover:text-[#a93620] transition">Cek Status Gizi</a></li>
+                        <li><a href="{% url 'publik:jadwal_posyandu' %}" class="text-sm text-[#58413d] hover:text-[#a93620] transition">Jadwal Posyandu</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-[#1c1c19] mb-4">Kontak</h4>
+                    <ul class="space-y-2">
+                        <li class="text-sm text-[#58413d]">Email: info@sipos.com</li>
+                        <li class="text-sm text-[#58413d]">Telp: (021) 1234 5678</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-[#e5e2dd] mt-8 pt-8 text-center">
+                <p class="text-xs text-[#58413d]">© {% now "Y" %} SIPOS - Sistem Informasi Posyandu Terintegrasi</p>
+                <p class="text-xs text-[#8c716b] mt-1">Warm Management System</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-md');
+            } else {
+                nav.classList.remove('shadow-md');
+            }
+        });
+    </script>
+</body>
+</html>

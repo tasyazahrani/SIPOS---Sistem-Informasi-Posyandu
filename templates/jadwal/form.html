@@ -1,0 +1,539 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if jadwal %}Edit Jadwal{% else %}Tambah Jadwal{% endif %} - SIPOS</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif; }
+        body { background-color: #fcf9f4; }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #e5e2dd; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #a93620; border-radius: 10px; }
+        
+        .sidebar-item {
+            transition: all 0.2s ease;
+            border-radius: 12px;
+        }
+        .sidebar-item:hover {
+            background-color: #f6f3ee;
+            color: #a93620;
+        }
+        .sidebar-item.active {
+            background-color: #f26b50;
+            color: #ffffff;
+        }
+        .sidebar-item.active .material-symbols-outlined {
+            color: #ffffff;
+        }
+        
+        .btn-primary {
+            background-color: #a93620;
+            color: white;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #881f0b;
+            transform: scale(0.98);
+        }
+        
+        .btn-secondary {
+            background-color: #e5e2dd;
+            color: #1c1c19;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #d5d2cd;
+        }
+        
+        .form-input {
+            border-radius: 12px;
+            border: 1px solid #dfbfb9;
+            transition: all 0.2s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #a93620;
+            box-shadow: 0 0 0 3px rgba(169, 54, 32, 0.2);
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1c1c19;
+            margin-bottom: 6px;
+            display: block;
+        }
+        
+        .required-star {
+            color: #ba1a1a;
+            margin-left: 4px;
+        }
+        
+        .info-card {
+            background: linear-gradient(135deg, #f6f3ee 0%, #ffffff 100%);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e5e2dd;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        
+        .error-message {
+            color: #ba1a1a;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body class="bg-[#fcf9f4]">
+
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col h-screen w-[280px] fixed left-0 top-0 bg-white border-r border-[#dfbfb9] z-40 shadow-sm">
+        <div class="px-6 py-8 border-b border-[#e5e2dd]">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#a93620] text-3xl">health_and_safety</span>
+                <div>
+                    <h1 class="text-2xl font-bold text-[#a93620]">SIPOS</h1>
+                    <p class="text-xs text-[#58413d] mt-0.5">Sistem Informasi Posyandu</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
+            <a href="{% url 'dashboard' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="text-sm font-semibold">Dashboard</span>
+            </a>
+            <a href="{% url 'balita:balita_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">child_care</span>
+                <span class="text-sm font-medium">Data Balita</span>
+            </a>
+            <a href="{% url 'penimbangan:penimbangan_create' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">straighten</span>
+                <span class="text-sm font-medium">Input Pengukuran</span>
+            </a>
+            <a href="{% url 'penimbangan:penimbangan_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">monitor_weight</span>
+                <span class="text-sm font-medium">Data Penimbangan</span>
+            </a>
+            <a href="{% url 'imunisasi:imunisasi_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">vaccines</span>
+                <span class="text-sm font-medium">Imunisasi</span>
+            </a>
+            <a href="{% url 'jadwal:jadwal_list' %}" class="sidebar-item active flex items-center gap-3 px-4 py-3 transition-all bg-[#f26b50] text-white">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span class="text-sm font-medium">Jadwal Posyandu</span>
+            </a>
+            <a href="{% url 'artikel:artikel_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">article</span>
+                <span class="text-sm font-medium">Artikel Edukasi</span>
+            </a>
+            <a href="{% url 'laporan:laporan_index' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">assessment</span>
+                <span class="text-sm font-medium">Laporan</span>
+            </a>
+
+            {% if user.is_staff %}
+            <a href="#" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">admin_panel_settings</span>
+                <span class="text-sm font-medium">Manajemen Kader</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <div class="px-4 py-6 border-t border-[#e5e2dd] space-y-1">
+            <a href="{% url 'pengaturan' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-[#1c1c19] hover:bg-[#f6f3ee] hover:text-[#a93620]">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-sm font-medium">Pengaturan</span>
+            </a>
+            <form method="post" action="{% url 'logout' %}" class="w-full">
+                {% csrf_token %}
+                <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all text-[#ba1a1a] hover:bg-[#ffdad6]">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="text-sm font-medium">Keluar</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 md:ml-[280px] min-h-screen">
+        <header class="sticky top-0 z-30 bg-[#fcf9f4]/95 backdrop-blur-md shadow-sm border-b border-[#dfbfb9]">
+            <div class="flex justify-between items-center px-6 py-4">
+                <button id="sidebarToggle" class="md:hidden p-2 rounded-lg text-[#58413d] hover:bg-[#f6f3ee]">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="flex items-center gap-4 flex-1 max-w-md">
+                    <div class="relative w-full">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#58413d]">search</span>
+                        <input type="text" placeholder="Cari data..." 
+                               class="w-full pl-10 pr-4 py-2.5 bg-white border border-[#dfbfb9] rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none text-sm transition-all">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="relative p-2 rounded-full text-[#58413d] hover:bg-[#f6f3ee] transition-colors">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#ba1a1a] rounded-full border-2 border-[#fcf9f4]"></span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-3 border-l border-[#dfbfb9]">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold text-[#1c1c19]">{{ user.get_full_name|default:user.username }}</p>
+                            <p class="text-xs text-[#58413d]">Kader Posyandu</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-[#f26b50] flex items-center justify-center text-white font-bold shadow-sm">
+                            {{ user.first_name|slice:":1"|default:user.username|slice:":1"|upper }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="px-6 py-6">
+            <div class="max-w-4xl mx-auto fade-in">
+
+                <!-- Header -->
+                <div class="flex items-center gap-4 mb-6">
+                    <a href="{% url 'jadwal:jadwal_list' %}" class="text-[#a93620] hover:text-[#881f0b] transition">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </a>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-[#1c1c19]">
+                            {% if jadwal %}Edit Jadwal Posyandu{% else %}Tambah Jadwal Posyandu{% endif %}
+                        </h1>
+                        <p class="text-sm text-[#58413d] mt-1">
+                            {% if jadwal %}Perbaharui informasi jadwal posyandu{% else %}Buat jadwal kegiatan posyandu baru{% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700 border border-red-200{% else %}bg-green-100 text-green-700 border border-green-200{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Form Card -->
+                <div class="bg-white rounded-2xl border border-[#e5e2dd] shadow-sm overflow-hidden">
+                    <form method="post" id="jadwalForm" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Form Body -->
+                        <div class="p-6 md:p-8">
+                            <!-- Info Section -->
+                            <div class="mb-6 pb-4 border-b border-[#e5e2dd]">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[#a93620]">calendar_month</span>
+                                    <h2 class="text-lg font-semibold text-[#1c1c19]">Informasi Kegiatan</h2>
+                                </div>
+                                <p class="text-sm text-[#58413d] mt-1">Isi data jadwal posyandu dengan lengkap</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Nama Kegiatan -->
+                                <div class="md:col-span-2">
+                                    <label class="form-label">
+                                        Nama Kegiatan <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">event_note</span>
+                                        <input type="text" name="nama_kegiatan" id="nama_kegiatan" value="{{ jadwal.nama_kegiatan|default:'' }}" required
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="Contoh: Penimbangan Balita Bulanan">
+                                    </div>
+                                    <div class="error-message" id="error-nama"></div>
+                                </div>
+
+                                <!-- Jenis Kegiatan -->
+                                <div>
+                                    <label class="form-label">
+                                        Jenis Kegiatan <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">category</span>
+                                        <select name="jenis_kegiatan" id="jenis_kegiatan" required
+                                                class="form-input w-full pl-10 pr-10 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all appearance-none bg-white">
+                                            <option value="">-- Pilih Jenis --</option>
+                                            <option value="Penimbangan" {% if jadwal.jenis_kegiatan == 'Penimbangan' %}selected{% endif %}>⚖️ Penimbangan Balita</option>
+                                            <option value="Imunisasi" {% if jadwal.jenis_kegiatan == 'Imunisasi' %}selected{% endif %}>💉 Imunisasi</option>
+                                            <option value="Penyuluhan" {% if jadwal.jenis_kegiatan == 'Penyuluhan' %}selected{% endif %}>📢 Penyuluhan Kesehatan</option>
+                                            <option value="Kelas Ibu Hamil" {% if jadwal.jenis_kegiatan == 'Kelas Ibu Hamil' %}selected{% endif %}>🤰 Kelas Ibu Hamil</option>
+                                            <option value="Pemberian Vitamin" {% if jadwal.jenis_kegiatan == 'Pemberian Vitamin' %}selected{% endif %}>💊 Pemberian Vitamin A</option>
+                                            <option value="Lainnya" {% if jadwal.jenis_kegiatan == 'Lainnya' %}selected{% endif %}>📋 Lainnya</option>
+                                        </select>
+                                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">expand_more</span>
+                                    </div>
+                                    <div class="error-message" id="error-jenis"></div>
+                                </div>
+
+                                <!-- Status -->
+                                <div>
+                                    <label class="form-label">
+                                        Status <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">flag</span>
+                                        <select name="status" id="status" required
+                                                class="form-input w-full pl-10 pr-10 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all appearance-none bg-white">
+                                            <option value="Akan Datang" {% if jadwal.status == 'Akan Datang' %}selected{% endif %}>📅 Akan Datang</option>
+                                            <option value="Sedang Berlangsung" {% if jadwal.status == 'Sedang Berlangsung' %}selected{% endif %}>⏳ Sedang Berlangsung</option>
+                                            <option value="Selesai" {% if jadwal.status == 'Selesai' %}selected{% endif %}>✅ Selesai</option>
+                                            <option value="Dibatalkan" {% if jadwal.status == 'Dibatalkan' %}selected{% endif %}>❌ Dibatalkan</option>
+                                        </select>
+                                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">expand_more</span>
+                                    </div>
+                                </div>
+
+                                <!-- Tanggal -->
+                                <div>
+                                    <label class="form-label">
+                                        Tanggal <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">calendar_today</span>
+                                        <input type="date" name="tanggal" id="tanggal" value="{{ jadwal.tanggal|date:'Y-m-d'|default:today }}" required
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all">
+                                    </div>
+                                    <div class="error-message" id="error-tanggal"></div>
+                                </div>
+
+                                <!-- Waktu Mulai -->
+                                <div>
+                                    <label class="form-label">
+                                        Waktu Mulai <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">schedule</span>
+                                        <input type="time" name="waktu_mulai" id="waktu_mulai" value="{{ jadwal.waktu_mulai|time:'H:i'|default:'08:00' }}" required
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all">
+                                    </div>
+                                    <div class="error-message" id="error-mulai"></div>
+                                </div>
+
+                                <!-- Waktu Selesai -->
+                                <div>
+                                    <label class="form-label">
+                                        Waktu Selesai <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">schedule</span>
+                                        <input type="time" name="waktu_selesai" id="waktu_selesai" value="{{ jadwal.waktu_selesai|time:'H:i'|default:'12:00' }}" required
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all">
+                                    </div>
+                                    <div class="error-message" id="error-selesai"></div>
+                                </div>
+
+                                <!-- Tempat -->
+                                <div class="md:col-span-2">
+                                    <label class="form-label">
+                                        Tempat <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">location_on</span>
+                                        <input type="text" name="tempat" id="tempat" value="{{ jadwal.tempat|default:'' }}" required
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="Contoh: Balai Desa Kemuning RW 04">
+                                    </div>
+                                    <div class="error-message" id="error-tempat"></div>
+                                </div>
+
+                                <!-- Petugas -->
+                                <div class="md:col-span-2">
+                                    <label class="form-label">Petugas</label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">badge</span>
+                                        <input type="text" name="petugas" id="petugas" value="{{ jadwal.petugas|default:'' }}"
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="Nama petugas yang bertanggung jawab">
+                                    </div>
+                                </div>
+
+                                <!-- Keterangan -->
+                                <div class="md:col-span-2">
+                                    <label class="form-label">Keterangan</label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-3 text-[#8c716b] text-lg">notes</span>
+                                        <textarea name="keterangan" id="keterangan" rows="3"
+                                                  class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all resize-none"
+                                                  placeholder="Catatan tambahan (opsional)">{{ jadwal.keterangan|default:'' }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Informasi Tambahan -->
+                            <div class="mt-8 p-4 bg-[#f6f3ee] rounded-xl border border-[#e5e2dd]">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-[#a93620]">tips_and_updates</span>
+                                    <h3 class="font-semibold text-[#1c1c19]">Tips Pengisian</h3>
+                                </div>
+                                <ul class="text-sm text-[#58413d] space-y-1 list-disc list-inside">
+                                    <li>Pastikan waktu mulai dan selesai sesuai dengan pelaksanaan</li>
+                                    <li>Cantumkan tempat yang jelas agar peserta mudah menemukan lokasi</li>
+                                    <li>Update status kegiatan setelah selesai dilaksanakan</li>
+                                    <li>Jadwal yang dibatalkan segera diubah statusnya</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="px-6 md:px-8 py-4 bg-[#f6f3ee] border-t border-[#e5e2dd] flex flex-col sm:flex-row justify-end gap-3">
+                            <a href="{% url 'jadwal:jadwal_list' %}" class="btn-secondary px-6 py-2.5 rounded-xl font-semibold text-center">
+                                Batal
+                            </a>
+                            <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-base">save</span>
+                                <span>{% if jadwal %}Simpan Perubahan{% else %}Simpan Jadwal{% endif %}</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Informasi Penting -->
+                <div class="mt-6 p-4 bg-[#cfe1f8]/30 rounded-xl border border-[#cfe1f8]">
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-[#4f6073]">info</span>
+                        <div class="text-sm text-[#58413d]">
+                            <p class="font-semibold mb-1">Informasi Penting:</p>
+                            <ul class="list-disc list-inside space-y-1 text-xs">
+                                <li>Field dengan tanda <span class="text-red-500">*</span> wajib diisi</li>
+                                <li>Jadwal yang sudah dilewati akan otomatis berubah status menjadi "Selesai"</li>
+                                <li>Pastikan tidak ada jadwal yang bentrok di waktu dan tempat yang sama</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sidebar toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('aside');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('hidden');
+            });
+        }
+
+        // Form validation
+        const form = document.getElementById('jadwalForm');
+        
+        function validateTime() {
+            const waktuMulai = document.getElementById('waktu_mulai').value;
+            const waktuSelesai = document.getElementById('waktu_selesai').value;
+            
+            if (waktuMulai && waktuSelesai && waktuMulai >= waktuSelesai) {
+                document.getElementById('error-selesai').innerHTML = 'Waktu selesai harus setelah waktu mulai';
+                return false;
+            } else {
+                document.getElementById('error-selesai').innerHTML = '';
+                return true;
+            }
+        }
+        
+        function validateForm() {
+            let isValid = true;
+            
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(el => el.innerHTML = '');
+            document.querySelectorAll('.form-input').forEach(el => el.classList.remove('border-red-500'));
+            
+            // Validate nama kegiatan
+            const nama = document.getElementById('nama_kegiatan');
+            if (!nama.value.trim()) {
+                document.getElementById('error-nama').innerHTML = 'Nama kegiatan harus diisi';
+                nama.classList.add('border-red-500');
+                isValid = false;
+            }
+            
+            // Validate jenis kegiatan
+            const jenis = document.getElementById('jenis_kegiatan');
+            if (!jenis.value) {
+                document.getElementById('error-jenis').innerHTML = 'Pilih jenis kegiatan';
+                jenis.classList.add('border-red-500');
+                isValid = false;
+            }
+            
+            // Validate tanggal
+            const tanggal = document.getElementById('tanggal');
+            if (!tanggal.value) {
+                document.getElementById('error-tanggal').innerHTML = 'Tanggal harus diisi';
+                tanggal.classList.add('border-red-500');
+                isValid = false;
+            }
+            
+            // Validate waktu mulai
+            const waktuMulai = document.getElementById('waktu_mulai');
+            if (!waktuMulai.value) {
+                document.getElementById('error-mulai').innerHTML = 'Waktu mulai harus diisi';
+                waktuMulai.classList.add('border-red-500');
+                isValid = false;
+            }
+            
+            // Validate waktu selesai
+            const waktuSelesai = document.getElementById('waktu_selesai');
+            if (!waktuSelesai.value) {
+                document.getElementById('error-selesai').innerHTML = 'Waktu selesai harus diisi';
+                waktuSelesai.classList.add('border-red-500');
+                isValid = false;
+            }
+            
+            // Validate tempat
+            const tempat = document.getElementById('tempat');
+            if (!tempat.value.trim()) {
+                document.getElementById('error-tempat').innerHTML = 'Tempat harus diisi';
+                tempat.classList.add('border-red-500');
+                isValid = false;
+            }
+            
+            // Validate time order
+            if (!validateTime()) {
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (!validateForm()) {
+                    e.preventDefault();
+                }
+            });
+        }
+        
+        // Real-time time validation
+        const waktuMulaiInput = document.getElementById('waktu_mulai');
+        const waktuSelesaiInput = document.getElementById('waktu_selesai');
+        
+        if (waktuMulaiInput && waktuSelesaiInput) {
+            waktuMulaiInput.addEventListener('change', validateTime);
+            waktuSelesaiInput.addEventListener('change', validateTime);
+        }
+    </script>
+</body>
+</html>

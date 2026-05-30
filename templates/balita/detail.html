@@ -1,0 +1,480 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Balita - {{ balita.nama }} - SIPOS</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif; }
+        body { background-color: #fcf9f4; }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #e5e2dd; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #a93620; border-radius: 10px; }
+        
+        .sidebar-item {
+            transition: all 0.2s ease;
+            border-radius: 12px;
+        }
+        .sidebar-item:hover {
+            background-color: #f6f3ee;
+            color: #a93620;
+        }
+        .sidebar-item.active {
+            background-color: #f26b50;
+            color: #ffffff;
+        }
+        .sidebar-item.active .material-symbols-outlined {
+            color: #ffffff;
+        }
+        
+        .btn-primary {
+            background-color: #a93620;
+            color: white;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #881f0b;
+            transform: scale(0.98);
+        }
+        
+        .info-card {
+            background: linear-gradient(135deg, #f6f3ee 0%, #ffffff 100%);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e5e2dd;
+        }
+        
+        .badge-normal { background-color: #c0ecda; color: #002117; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        .badge-warning { background-color: #ffdad6; color: #93000a; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        .badge-sudah { background-color: #c0ecda; color: #002117; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        .badge-belum { background-color: #ffdad6; color: #93000a; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        
+        .progress-bar { background-color: #e5e2dd; border-radius: 10px; overflow: hidden; }
+        .progress-fill { background-color: #a93620; height: 8px; border-radius: 10px; transition: width 0.5s ease; }
+    </style>
+</head>
+<body class="bg-[#fcf9f4]">
+
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col h-screen w-[280px] fixed left-0 top-0 bg-white border-r border-[#dfbfb9] z-40 shadow-sm">
+        <div class="px-6 py-8 border-b border-[#e5e2dd]">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#a93620] text-3xl">health_and_safety</span>
+                <div>
+                    <h1 class="text-2xl font-bold text-[#a93620]">SIPOS</h1>
+                    <p class="text-xs text-[#58413d] mt-0.5">Sistem Informasi Posyandu</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
+            <a href="{% url 'dashboard' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="text-sm font-semibold">Dashboard</span>
+            </a>
+            <a href="{% url 'balita:balita_list' %}" class="sidebar-item active flex items-center gap-3 px-4 py-3 transition-all bg-[#f26b50] text-white">
+                <span class="material-symbols-outlined">child_care</span>
+                <span class="text-sm font-medium">Data Balita</span>
+            </a>
+            <a href="{% url 'penimbangan:penimbangan_create' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">straighten</span>
+                <span class="text-sm font-medium">Input Pengukuran</span>
+            </a>
+            <a href="{% url 'penimbangan:penimbangan_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">monitor_weight</span>
+                <span class="text-sm font-medium">Data Penimbangan</span>
+            </a>
+            <a href="{% url 'imunisasi:imunisasi_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">vaccines</span>
+                <span class="text-sm font-medium">Imunisasi</span>
+            </a>
+            <a href="{% url 'jadwal:jadwal_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span class="text-sm font-medium">Jadwal Posyandu</span>
+            </a>
+            <a href="{% url 'artikel:artikel_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">article</span>
+                <span class="text-sm font-medium">Artikel Edukasi</span>
+            </a>
+            <a href="{% url 'laporan:laporan_index' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">assessment</span>
+                <span class="text-sm font-medium">Laporan</span>
+            </a>
+
+            {% if user.is_staff %}
+            <a href="#" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">admin_panel_settings</span>
+                <span class="text-sm font-medium">Manajemen Kader</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <div class="px-4 py-6 border-t border-[#e5e2dd] space-y-1">
+            <a href="{% url 'pengaturan' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-[#1c1c19] hover:bg-[#f6f3ee] hover:text-[#a93620]">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-sm font-medium">Pengaturan</span>
+            </a>
+            <form method="post" action="{% url 'logout' %}" class="w-full">
+                {% csrf_token %}
+                <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all text-[#ba1a1a] hover:bg-[#ffdad6]">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="text-sm font-medium">Keluar</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 md:ml-[280px] min-h-screen">
+        <header class="sticky top-0 z-30 bg-[#fcf9f4]/95 backdrop-blur-md shadow-sm border-b border-[#dfbfb9]">
+            <div class="flex justify-between items-center px-6 py-4">
+                <button id="sidebarToggle" class="md:hidden p-2 rounded-lg text-[#58413d] hover:bg-[#f6f3ee]">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="flex items-center gap-4 flex-1 max-w-md">
+                    <div class="relative w-full">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#58413d]">search</span>
+                        <input type="text" placeholder="Cari data..." 
+                               class="w-full pl-10 pr-4 py-2.5 bg-white border border-[#dfbfb9] rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none text-sm transition-all">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="relative p-2 rounded-full text-[#58413d] hover:bg-[#f6f3ee] transition-colors">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#ba1a1a] rounded-full border-2 border-[#fcf9f4]"></span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-3 border-l border-[#dfbfb9]">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold text-[#1c1c19]">{{ user.get_full_name|default:user.username }}</p>
+                            <p class="text-xs text-[#58413d]">Kader Posyandu</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-[#f26b50] flex items-center justify-center text-white font-bold shadow-sm">
+                            {{ user.first_name|slice:":1"|default:user.username|slice:":1"|upper }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="px-6 py-6">
+            <div class="max-w-7xl mx-auto space-y-6 fade-in">
+
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <a href="{% url 'balita:balita_list' %}" class="text-[#a93620] hover:text-[#881f0b] transition">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                        </a>
+                        <div>
+                            <h1 class="text-2xl md:text-3xl font-bold text-[#1c1c19]">Detail Balita</h1>
+                            <p class="text-sm text-[#58413d] mt-1">Informasi lengkap dan riwayat pertumbuhan</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <a href="{% url 'balita:balita_edit' balita.id %}" class="btn-primary px-5 py-2.5 rounded-xl flex items-center gap-2">
+                            <span class="material-symbols-outlined text-base">edit</span>
+                            <span>Edit Data</span>
+                        </a>
+                        <a href="{% url 'penimbangan:penimbangan_create' %}" class="bg-[#4f6073] hover:bg-[#37485b] text-white px-5 py-2.5 rounded-xl flex items-center gap-2 transition">
+                            <span class="material-symbols-outlined text-base">straighten</span>
+                            <span>Tambah Penimbangan</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Profil Balita -->
+                <div class="bg-white rounded-xl border border-[#e5e2dd] overflow-hidden">
+                    <div class="bg-gradient-to-r from-[#a93620] to-[#881f0b] px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-white text-4xl">child_care</span>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-white">{{ balita.nama }}</h2>
+                                <p class="text-[#ffb4a5]">Terdaftar sejak {{ balita.created_at|date:"d M Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="info-card">
+                                <p class="text-xs text-[#58413d] mb-1">Usia</p>
+                                <p class="text-xl font-bold text-[#1c1c19]">{{ usia_display }}</p>
+                            </div>
+                            <div class="info-card">
+                                <p class="text-xs text-[#58413d] mb-1">Jenis Kelamin</p>
+                                <p class="text-xl font-bold text-[#1c1c19]">{{ balita.get_jenis_kelamin_display }}</p>
+                            </div>
+                            <div class="info-card">
+                                <p class="text-xs text-[#58413d] mb-1">NIK</p>
+                                <p class="text-xl font-bold text-[#1c1c19]">{{ balita.nik|default:"-" }}</p>
+                            </div>
+                            <div class="info-card">
+                                <p class="text-xs text-[#58413d] mb-1">Tempat, Tanggal Lahir</p>
+                                <p class="text-xl font-bold text-[#1c1c19]">{{ balita.tempat_lahir|default:"-" }}, {{ balita.tanggal_lahir|date:"d/m/Y" }}</p>
+                            </div>
+                            <div class="info-card">
+                                <p class="text-xs text-[#58413d] mb-1">Nama Ibu</p>
+                                <p class="text-xl font-bold text-[#1c1c19]">{{ balita.nama_ibu }}</p>
+                            </div>
+                            <div class="info-card">
+                                <p class="text-xs text-[#58413d] mb-1">Nama Ayah</p>
+                                <p class="text-xl font-bold text-[#1c1c19]">{{ balita.nama_ayah|default:"-" }}</p>
+                            </div>
+                            <div class="info-card md:col-span-2">
+                                <p class="text-xs text-[#58413d] mb-1">Alamat</p>
+                                <p class="text-xl font-bold text-[#1c1c19]">{{ balita.alamat }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistik Ringkas -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                    <div class="info-card text-center">
+                        <span class="material-symbols-outlined text-[#a93620] text-3xl">monitor_weight</span>
+                        <p class="text-2xl font-bold text-[#1c1c19] mt-1">{{ total_penimbangan }}</p>
+                        <p class="text-xs text-[#58413d]">Kali Penimbangan</p>
+                    </div>
+                    <div class="info-card text-center">
+                        <span class="material-symbols-outlined text-[#a93620] text-3xl">fitness_center</span>
+                        <p class="text-2xl font-bold text-[#1c1c19] mt-1">{{ rata_rata_berat }} kg</p>
+                        <p class="text-xs text-[#58413d]">Rata-rata Berat</p>
+                    </div>
+                    <div class="info-card text-center">
+                        <span class="material-symbols-outlined text-[#a93620] text-3xl">height</span>
+                        <p class="text-2xl font-bold text-[#1c1c19] mt-1">{{ rata_rata_tinggi }} cm</p>
+                        <p class="text-xs text-[#58413d]">Rata-rata Tinggi</p>
+                    </div>
+                    <div class="info-card text-center">
+                        <span class="material-symbols-outlined text-[#a93620] text-3xl">vaccines</span>
+                        <p class="text-2xl font-bold text-[#1c1c19] mt-1">{{ imunisasi_sudah }}/{{ total_imunisasi }}</p>
+                        <p class="text-xs text-[#58413d]">Imunisasi Selesai</p>
+                        <div class="progress-bar mt-2">
+                            <div class="progress-fill" style="width: {{ persen_imunisasi }}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grafik Pertumbuhan -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl border border-[#e5e2dd] p-6">
+                        <h3 class="text-lg font-semibold text-[#1c1c19] mb-4">Grafik Pertumbuhan Berat Badan</h3>
+                        <canvas id="weightChart" height="250"></canvas>
+                        <p class="text-center text-sm text-[#58413d] mt-4">Perkembangan berat badan dari waktu ke waktu</p>
+                    </div>
+                    <div class="bg-white rounded-xl border border-[#e5e2dd] p-6">
+                        <h3 class="text-lg font-semibold text-[#1c1c19] mb-4">Grafik Pertumbuhan Tinggi Badan</h3>
+                        <canvas id="heightChart" height="250"></canvas>
+                        <p class="text-center text-sm text-[#58413d] mt-4">Perkembangan tinggi badan dari waktu ke waktu</p>
+                    </div>
+                </div>
+
+                <!-- Riwayat Penimbangan -->
+                <div class="bg-white rounded-xl border border-[#e5e2dd] overflow-hidden">
+                    <div class="px-6 py-4 border-b border-[#e5e2dd] flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-semibold text-[#1c1c19]">Riwayat Penimbangan</h3>
+                            <p class="text-sm text-[#58413d] mt-1">10 data penimbangan terakhir</p>
+                        </div>
+                        <a href="{% url 'penimbangan:penimbangan_list' %}" class="text-[#a93620] text-sm font-medium hover:underline">Lihat Semua</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-[#f0ede9]">
+                                <tr>
+                                    <th class="px-6 py-3 text-xs font-semibold text-[#58413d] uppercase">Tanggal</th>
+                                    <th class="px-6 py-3 text-xs font-semibold text-[#58413d] uppercase">Usia</th>
+                                    <th class="px-6 py-3 text-xs font-semibold text-[#58413d] uppercase">Berat Badan</th>
+                                    <th class="px-6 py-3 text-xs font-semibold text-[#58413d] uppercase">Tinggi Badan</th>
+                                    <th class="px-6 py-3 text-xs font-semibold text-[#58413d] uppercase">Status Gizi</th>
+                                    <th class="px-6 py-3 text-xs font-semibold text-[#58413d] uppercase">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#e5e2dd]">
+                                {% for p in riwayat_penimbangan %}
+                                <tr class="hover:bg-[#f6f3ee] transition">
+                                    <td class="px-6 py-3 text-sm">{{ p.tanggal|date:"d/m/Y" }}</td>
+                                    <td class="px-6 py-3 text-sm">{{ p.balita.tanggal_lahir|timesince:p.tanggal }}</td>
+                                    <td class="px-6 py-3 text-sm font-medium">{{ p.berat_badan }} kg</td>
+                                    <td class="px-6 py-3 text-sm font-medium">{{ p.tinggi_badan }} cm</td>
+                                    <td class="px-6 py-3">
+                                        {% if p.status_gizi == 'Normal' %}
+                                            <span class="badge-normal">Normal</span>
+                                        {% else %}
+                                            <span class="badge-warning">{{ p.status_gizi }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-3">
+                                        <a href="{% url 'penimbangan:penimbangan_edit' p.id %}" class="text-[#8c716b] hover:text-[#a93620]">
+                                            <span class="material-symbols-outlined text-sm">edit</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="px-6 py-8 text-center text-[#58413d]">
+                                        Belum ada data penimbangan.
+                                        <a href="{% url 'penimbangan:penimbangan_create' %}" class="text-[#a93620] ml-2">Tambah sekarang</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Riwayat Imunisasi -->
+                <div class="bg-white rounded-xl border border-[#e5e2dd] overflow-hidden">
+                    <div class="px-6 py-4 border-b border-[#e5e2dd] flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-semibold text-[#1c1c19]">Riwayat Imunisasi</h3>
+                            <p class="text-sm text-[#58413d] mt-1">10 data imunisasi terakhir</p>
+                        </div>
+                        <a href="{% url 'imunisasi:imunisasi_list' %}" class="text-[#a93620] text-sm font-medium hover:underline">Lihat Semua</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-[#f0ede9]">
+                                <tr>
+                                    <th class="px-6 py-3 text-xs font-semibold text-[#58413d] uppercase">Tanggal</th>
+                                    <th class="px-6 py-3 text-xs font-semibold text-[#58413d] uppercase">Jenis Imunisasi</th>
+                                    <th class="px-6 py-3 text-xs font-semibold text-[#58413d] uppercase">Usia</th>
+                                    <th class="px-6 py-3 text-xs font-semibold text-[#58413d] uppercase">Status</th>
+                                    <th class="px-6 py-3 text-xs font-semibold text-[#58413d] uppercase">Tempat</th>
+                                    <th class="px-6 py-3 text-xs font-semibold text-[#58413d] uppercase">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#e5e2dd]">
+                                {% for im in riwayat_imunisasi %}
+                                <tr class="hover:bg-[#f6f3ee] transition">
+                                    <td class="px-6 py-3 text-sm">{{ im.tanggal|date:"d/m/Y" }}</td>
+                                    <td class="px-6 py-3 text-sm font-medium">{{ im.get_jenis_imunisasi_display }}</td>
+                                    <td class="px-6 py-3 text-sm">{{ im.usia_saat_imunisasi|default:"-" }} bulan</td>
+                                    <td class="px-6 py-3">
+                                        {% if im.status == 'Sudah' %}
+                                            <span class="badge-sudah">✅ Sudah</span>
+                                        {% else %}
+                                            <span class="badge-belum">⏳ {{ im.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-3 text-sm">{{ im.tempat|default:"-" }}</td>
+                                    <td class="px-6 py-3">
+                                        <a href="{% url 'imunisasi:imunisasi_edit' im.id %}" class="text-[#8c716b] hover:text-[#a93620]">
+                                            <span class="material-symbols-outlined text-sm">edit</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="px-6 py-8 text-center text-[#58413d]">
+                                        Belum ada data imunisasi.
+                                        <a href="{% url 'imunisasi:imunisasi_create' %}" class="text-[#a93620] ml-2">Tambah sekarang</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="bg-white p-5 rounded-xl border border-[#e5e2dd] text-center">
+                    <p class="text-xs text-[#58413d]">© {% now "Y" %} SIPOS - Sistem Informasi Posyandu Terintegrasi</p>
+                    <p class="text-xs text-[#8c716b] mt-1">Warm Management System | Detail Balita</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sidebar toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('aside');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('hidden');
+            });
+        }
+
+        // Weight Chart
+        const weightCtx = document.getElementById('weightChart')?.getContext('2d');
+        if (weightCtx && {{ chart_labels|safe }}) {
+            new Chart(weightCtx, {
+                type: 'line',
+                data: {
+                    labels: {{ chart_labels|safe }},
+                    datasets: [{
+                        label: 'Berat Badan (kg)',
+                        data: {{ chart_berat|safe }},
+                        borderColor: '#a93620',
+                        backgroundColor: 'rgba(169, 54, 32, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#a93620',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { y: { beginAtZero: false, title: { display: true, text: 'Berat (kg)' } } }
+                }
+            });
+        }
+
+        // Height Chart
+        const heightCtx = document.getElementById('heightChart')?.getContext('2d');
+        if (heightCtx && {{ chart_labels|safe }}) {
+            new Chart(heightCtx, {
+                type: 'line',
+                data: {
+                    labels: {{ chart_labels|safe }},
+                    datasets: [{
+                        label: 'Tinggi Badan (cm)',
+                        data: {{ chart_tinggi|safe }},
+                        borderColor: '#a93620',
+                        backgroundColor: 'rgba(169, 54, 32, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#a93620',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { y: { beginAtZero: false, title: { display: true, text: 'Tinggi (cm)' } } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

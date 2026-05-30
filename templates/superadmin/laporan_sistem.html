@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Sistem - Super Admin SIPOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Montserrat', sans-serif; }
+        body { background-color: #fcf9f4; }
+        .btn-primary { background-color: #a93620; color: white; font-weight: 600; border-radius: 12px; transition: all 0.2s ease; }
+        .btn-primary:hover { background-color: #881f0b; }
+    </style>
+</head>
+<body class="bg-[#fcf9f4] p-8">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-2xl font-bold text-[#1c1c19] mb-4">Laporan Sistem</h1>
+        <p class="text-sm text-[#58413d] mb-6">Fitur dalam pengembangan</p>
+        <div class="bg-white rounded-xl border border-[#e5e2dd] p-8 text-center">
+            <span class="material-symbols-outlined text-5xl text-gray-300">construction</span>
+            <p class="text-[#58413d] mt-3">Halaman sedang dalam pengembangan</p>
+            <a href="{% url 'superadmin:dashboard' %}" class="btn-primary px-5 py-2.5 rounded-xl inline-block mt-4">Kembali ke Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

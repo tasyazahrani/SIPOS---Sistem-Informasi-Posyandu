@@ -1,0 +1,352 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen User - Super Admin SIPOS</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif; }
+        body { background-color: #fcf9f4; }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #e5e2dd; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #a93620; border-radius: 10px; }
+        
+        .sidebar-item {
+            transition: all 0.2s ease;
+            border-radius: 12px;
+        }
+        .sidebar-item:hover {
+            background-color: #f6f3ee;
+            color: #a93620;
+        }
+        .sidebar-item.active {
+            background-color: #f26b50;
+            color: #ffffff;
+        }
+        
+        .btn-primary {
+            background-color: #a93620;
+            color: white;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #881f0b;
+            transform: scale(0.98);
+        }
+        
+        .badge-superadmin { background-color: #e5e2dd; color: #1c1c19; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        .badge-admin { background-color: #cfe1f8; color: #4f6073; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        .badge-kader { background-color: #c0ecda; color: #002117; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        .badge-ortu { background-color: #ffdad6; color: #93000a; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        .badge-nonaktif { background-color: #e5e2dd; color: #8c716b; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        
+        .modal { transition: all 0.3s ease; }
+        .modal.hidden { display: none; }
+    </style>
+</head>
+<body class="bg-[#fcf9f4]">
+
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col h-screen w-[280px] fixed left-0 top-0 bg-white border-r border-[#dfbfb9] z-40 shadow-sm">
+        <div class="px-6 py-8 border-b border-[#e5e2dd]">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#a93620] text-3xl">health_and_safety</span>
+                <div>
+                    <h1 class="text-2xl font-bold text-[#a93620]">SIPOS</h1>
+                    <p class="text-xs text-[#58413d]">Super Admin Panel</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
+            <a href="{% url 'superadmin:dashboard' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="text-sm font-semibold">Dashboard</span>
+            </a>
+            <a href="{% url 'superadmin:manajemen_user' %}" class="sidebar-item active flex items-center gap-3 px-4 py-3 transition-all bg-[#f26b50] text-white">
+                <span class="material-symbols-outlined">people</span>
+                <span class="text-sm font-medium">Manajemen User</span>
+            </a>
+            <a href="{% url 'superadmin:manajemen_kader' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">admin_panel_settings</span>
+                <span class="text-sm font-medium">Manajemen Kader</span>
+            </a>
+            <a href="{% url 'superadmin:manajemen_posyandu' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">location_city</span>
+                <span class="text-sm font-medium">Manajemen Posyandu</span>
+            </a>
+            <a href="{% url 'superadmin:laporan_sistem' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">assessment</span>
+                <span class="text-sm font-medium">Laporan Sistem</span>
+            </a>
+            <a href="{% url 'superadmin:backup_data' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">backup</span>
+                <span class="text-sm font-medium">Backup Data</span>
+            </a>
+            <a href="{% url 'superadmin:pengaturan_sistem' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">settings_system_daydream</span>
+                <span class="text-sm font-medium">Pengaturan Sistem</span>
+            </a>
+        </nav>
+
+        <div class="px-4 py-6 border-t border-[#e5e2dd] space-y-1">
+            <a href="{% url 'superadmin:pengaturan' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-[#1c1c19] hover:bg-[#f6f3ee] hover:text-[#a93620]">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-sm font-medium">Pengaturan</span>
+            </a>
+            <form method="post" action="{% url 'logout' %}" class="w-full">
+                {% csrf_token %}
+                <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all text-[#ba1a1a] hover:bg-[#ffdad6]">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="text-sm font-medium">Keluar</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 md:ml-[280px] min-h-screen">
+        <header class="sticky top-0 z-30 bg-[#fcf9f4]/95 backdrop-blur-md shadow-sm border-b border-[#dfbfb9]">
+            <div class="flex justify-between items-center px-6 py-4">
+                <button id="sidebarToggle" class="md:hidden p-2 rounded-lg text-[#58413d] hover:bg-[#f6f3ee]">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="flex items-center gap-4 flex-1 max-w-md">
+                    <div class="relative w-full">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#58413d]">search</span>
+                        <input type="text" id="searchInput" placeholder="Cari user..." 
+                               class="w-full pl-10 pr-4 py-2.5 bg-white border border-[#dfbfb9] rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none text-sm transition-all">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="relative p-2 rounded-full text-[#58413d] hover:bg-[#f6f3ee]">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#ba1a1a] rounded-full border-2 border-[#fcf9f4]"></span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-3 border-l border-[#dfbfb9]">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold text-[#1c1c19]">{{ user.get_full_name|default:user.username }}</p>
+                            <p class="text-xs text-[#58413d]">Super Admin</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-[#f26b50] flex items-center justify-center text-white font-bold shadow-sm">
+                            {{ user.first_name|slice:":1"|default:user.username|slice:":1"|upper }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="px-6 py-6">
+            <div class="max-w-[1440px] mx-auto space-y-6 fade-in">
+
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-[#1c1c19]">Manajemen User</h1>
+                        <p class="text-sm text-[#58413d] mt-1">Kelola semua pengguna sistem SIPOS</p>
+                    </div>
+                    <a href="{% url 'superadmin:user_create' %}" class="btn-primary px-5 py-2.5 rounded-xl flex items-center gap-2">
+                        <span class="material-symbols-outlined text-base">person_add</span>
+                        <span>Tambah User</span>
+                    </a>
+                </div>
+
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="p-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700 border border-red-200{% else %}bg-green-100 text-green-700 border border-green-200{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Filter Section -->
+                <div class="bg-white rounded-xl border border-[#e5e2dd] p-4">
+                    <form method="get" class="flex flex-wrap gap-4 items-end">
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="block text-sm font-medium text-[#58413d] mb-1">Cari User</label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#58413d] text-lg">search</span>
+                                <input type="text" name="search" value="{{ search|default:'' }}" placeholder="Username, nama, email..." 
+                                       class="w-full pl-10 pr-4 py-2 bg-white border border-[#dfbfb9] rounded-xl focus:ring-2 focus:ring-[#a93620] outline-none text-sm">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-[#58413d] mb-1">Filter Role</label>
+                            <select name="role" class="px-4 py-2 bg-white border border-[#dfbfb9] rounded-xl focus:ring-2 focus:ring-[#a93620] outline-none">
+                                <option value="">Semua Role</option>
+                                <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Admin</option>
+                                <option value="kader" {% if role_filter == 'kader' %}selected{% endif %}>Kader</option>
+                                <option value="ortu" {% if role_filter == 'ortu' %}selected{% endif %}>Orang Tua</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button type="submit" class="bg-[#a93620] text-white px-6 py-2 rounded-xl hover:bg-[#881f0b] transition">
+                                Filter
+                            </button>
+                        </div>
+                        <div>
+                            <a href="{% url 'superadmin:manajemen_user' %}" class="px-6 py-2 border border-[#dfbfb9] rounded-xl hover:bg-[#f6f3ee] transition inline-block">
+                                Reset
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Table -->
+                <div class="bg-white rounded-xl border border-[#e5e2dd] overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-[#f0ede9]">
+                                <tr>
+                                    <th class="px-6 py-4 text-xs font-semibold text-[#58413d] uppercase">No</th>
+                                    <th class="px-6 py-4 text-xs font-semibold text-[#58413d] uppercase">Username</th>
+                                    <th class="px-6 py-4 text-xs font-semibold text-[#58413d] uppercase">Nama Lengkap</th>
+                                    <th class="px-6 py-4 text-xs font-semibold text-[#58413d] uppercase">Email</th>
+                                    <th class="px-6 py-4 text-xs font-semibold text-[#58413d] uppercase">Role</th>
+                                    <th class="px-6 py-4 text-xs font-semibold text-[#58413d] uppercase">Status</th>
+                                    <th class="px-6 py-4 text-xs font-semibold text-[#58413d] uppercase">Bergabung</th>
+                                    <th class="px-6 py-4 text-xs font-semibold text-[#58413d] uppercase">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#e5e2dd]">
+                                {% for u in users %}
+                                <tr class="hover:bg-[#f6f3ee] transition">
+                                    <td class="px-6 py-4 text-sm">{{ forloop.counter }}</td>
+                                    <td class="px-6 py-4 text-sm font-medium">{{ u.username }}</td>
+                                    <td class="px-6 py-4 text-sm">{{ u.first_name|default:"-" }}</td>
+                                    <td class="px-6 py-4 text-sm">{{ u.email|default:"-" }}</td>
+                                    <td class="px-6 py-4">
+                                        {% if u.is_superuser %}
+                                            <span class="badge-superadmin">👑 Super Admin</span>
+                                        {% elif u.is_staff %}
+                                            <span class="badge-admin">📋 Admin</span>
+                                        elif u.groups.first.name == 'Kader' %}
+                                            <span class="badge-kader">👤 Kader</span>
+                                        else %}
+                                            <span class="badge-ortu">👪 Orang Tua</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {% if u.is_active %}
+                                            <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">✅ Aktif</span>
+                                        {% else %}
+                                            <span class="badge-nonaktif">⛔ Nonaktif</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm">{{ u.date_joined|date:"d/m/Y" }}</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex gap-2">
+                                            <a href="{% url 'superadmin:user_edit' u.id %}" class="text-[#8c716b] hover:text-[#a93620]" title="Edit">
+                                                <span class="material-symbols-outlined text-sm">edit</span>
+                                            </a>
+                                            <a href="{% url 'superadmin:user_reset_password' u.id %}" class="text-[#8c716b] hover:text-[#a93620]" title="Reset Password">
+                                                <span class="material-symbols-outlined text-sm">key</span>
+                                            </a>
+                                            <button onclick="confirmDelete({{ u.id }}, '{{ u.username|escapejs }}')" class="text-[#8c716b] hover:text-[#ba1a1a]" title="Hapus">
+                                                <span class="material-symbols-outlined text-sm">delete</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="px-6 py-8 text-center text-[#58413d]">
+                                        Belum ada data user.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                {% if users.has_other_pages %}
+                <div class="flex justify-center gap-2">
+                    {% if users.has_previous %}
+                        <a href="?page={{ users.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}" class="px-3 py-1 border border-[#dfbfb9] rounded-lg hover:bg-[#f6f3ee] transition">&laquo;</a>
+                    {% endif %}
+                    <span class="px-3 py-1 bg-[#a93620] text-white rounded-lg">{{ users.number }}</span>
+                    {% if users.has_next %}
+                        <a href="?page={{ users.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}" class="px-3 py-1 border border-[#dfbfb9] rounded-lg hover:bg-[#f6f3ee] transition">&raquo;</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Footer -->
+                <div class="bg-white p-5 rounded-xl border border-[#e5e2dd] text-center">
+                    <p class="text-xs text-[#58413d]">© {% now "Y" %} SIPOS - Sistem Informasi Posyandu Terintegrasi</p>
+                    <p class="text-xs text-[#8c716b] mt-1">Super Admin Panel | Manajemen User</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-red-500 text-3xl">warning</span>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Konfirmasi Hapus</h3>
+                <p class="text-[#58413d] mb-6">Yakin ingin menghapus user <span id="deleteUserName" class="font-semibold"></span>?</p>
+                <div class="flex gap-3 justify-center">
+                    <button onclick="closeDeleteModal()" class="px-5 py-2 border border-[#dfbfb9] rounded-xl hover:bg-[#f6f3ee] transition">Batal</button>
+                    <form id="deleteForm" method="POST" action="">
+                        {% csrf_token %}
+                        <button type="submit" class="px-5 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition">Hapus</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('aside');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', () => sidebar.classList.toggle('hidden'));
+        }
+
+        const deleteModal = document.getElementById('deleteModal');
+        const deleteForm = document.getElementById('deleteForm');
+        const deleteUserName = document.getElementById('deleteUserName');
+
+        function confirmDelete(id, username) {
+            deleteUserName.textContent = username;
+            deleteForm.action = "{% url 'superadmin:user_delete' 0 %}".replace('0', id);
+            deleteModal.classList.remove('hidden');
+            deleteModal.classList.add('flex');
+        }
+
+        function closeDeleteModal() {
+            deleteModal.classList.add('hidden');
+            deleteModal.classList.remove('flex');
+        }
+
+        deleteModal?.addEventListener('click', (e) => { if (e.target === deleteModal) closeDeleteModal(); });
+    </script>
+</body>
+</html>

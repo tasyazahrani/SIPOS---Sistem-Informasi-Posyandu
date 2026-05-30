@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hapus Balita - SIPOS{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-outlined text-red-500 text-3xl">warning</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Konfirmasi Hapus</h3>
+            <p class="text-gray-500 mb-6">
+                Apakah Anda yakin ingin menghapus balita <span class="font-semibold text-gray-800">{{ balita.nama }}</span>?
+                Data yang sudah dihapus tidak dapat dikembalikan.
+            </p>
+            <div class="flex gap-3 justify-center">
+                <a href="{% url 'balita:balita_list' %}" class="px-5 py-2.5 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors">
+                    Batal
+                </a>
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-colors">
+                        Ya, Hapus
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

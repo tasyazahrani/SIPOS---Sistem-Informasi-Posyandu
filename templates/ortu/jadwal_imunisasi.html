@@ -1,0 +1,407 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Imunisasi - SIPOS</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif; }
+        body { background-color: #fcf9f4; }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #e5e2dd; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #a93620; border-radius: 10px; }
+        
+        .sidebar-item {
+            transition: all 0.2s ease;
+            border-radius: 12px;
+        }
+        .sidebar-item:hover {
+            background-color: #f6f3ee;
+            color: #a93620;
+        }
+        .sidebar-item.active {
+            background-color: #f26b50;
+            color: #ffffff;
+        }
+        .sidebar-item.active .material-symbols-outlined {
+            color: #ffffff;
+        }
+        
+        .info-card {
+            background: linear-gradient(135deg, #f6f3ee 0%, #ffffff 100%);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e5e2dd;
+        }
+        
+        .badge-mendatang { background-color: #cfe1f8; color: #4f6073; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        .badge-terlewat { background-color: #ffdad6; color: #93000a; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        .badge-rekomendasi { background-color: #c0ecda; color: #002117; border-radius: 9999px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        
+        .progress-bar { background-color: #e5e2dd; border-radius: 10px; overflow: hidden; }
+        .progress-fill { background-color: #a93620; height: 8px; border-radius: 10px; transition: width 0.5s ease; }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #e5e2dd;
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #a93620;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #a93620;
+        }
+        .timeline-dot.completed {
+            background-color: #c0ecda;
+            box-shadow: 0 0 0 2px #c0ecda;
+        }
+    </style>
+</head>
+<body class="bg-[#fcf9f4]">
+
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col h-screen w-[280px] fixed left-0 top-0 bg-white border-r border-[#dfbfb9] z-40 shadow-sm">
+        <div class="px-6 py-8 border-b border-[#e5e2dd]">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#a93620] text-3xl">health_and_safety</span>
+                <div>
+                    <h1 class="text-2xl font-bold text-[#a93620]">SIPOS</h1>
+                    <p class="text-xs text-[#58413d] mt-0.5">Sistem Informasi Posyandu</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
+            <a href="{% url 'dashboard_ortu' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="text-sm font-semibold">Dashboard</span>
+            </a>
+            <a href="{% url 'ortu:data_anak' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">child_care</span>
+                <span class="text-sm font-medium">Data Anak</span>
+            </a>
+            <a href="{% url 'ortu:riwayat_penimbangan' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">monitor_weight</span>
+                <span class="text-sm font-medium">Riwayat Penimbangan</span>
+            </a>
+            <a href="{% url 'ortu:riwayat_imunisasi' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">vaccines</span>
+                <span class="text-sm font-medium">Riwayat Imunisasi</span>
+            </a>
+            <a href="{% url 'ortu:artikel_edukasi' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">article</span>
+                <span class="text-sm font-medium">Artikel Edukasi</span>
+            </a>
+            <a href="{% url 'ortu:jadwal_imunisasi' %}" class="sidebar-item active flex items-center gap-3 px-4 py-3 transition-all bg-[#f26b50] text-white">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span class="text-sm font-medium">Jadwal Imunisasi</span>
+            </a>
+        </nav>
+
+        <div class="px-4 py-6 border-t border-[#e5e2dd] space-y-1">
+            <a href="{% url 'ortu:pengaturan_ortu' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-[#1c1c19] hover:bg-[#f6f3ee] hover:text-[#a93620]">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-sm font-medium">Pengaturan</span>
+            </a>
+            <form method="post" action="{% url 'logout' %}" class="w-full">
+                {% csrf_token %}
+                <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all text-[#ba1a1a] hover:bg-[#ffdad6]">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="text-sm font-medium">Keluar</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 md:ml-[280px] min-h-screen">
+        <header class="sticky top-0 z-30 bg-[#fcf9f4]/95 backdrop-blur-md shadow-sm border-b border-[#dfbfb9]">
+            <div class="flex justify-between items-center px-6 py-4">
+                <button id="sidebarToggle" class="md:hidden p-2 rounded-lg text-[#58413d] hover:bg-[#f6f3ee]">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="flex items-center gap-4 flex-1 max-w-md">
+                    <div class="relative w-full">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#58413d]">search</span>
+                        <input type="text" placeholder="Cari jadwal..." 
+                               class="w-full pl-10 pr-4 py-2.5 bg-white border border-[#dfbfb9] rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none text-sm transition-all">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="relative p-2 rounded-full text-[#58413d] hover:bg-[#f6f3ee] transition-colors">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#ba1a1a] rounded-full border-2 border-[#fcf9f4]"></span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-3 border-l border-[#dfbfb9]">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold text-[#1c1c19]">{{ user.get_full_name|default:user.username }}</p>
+                            <p class="text-xs text-[#58413d]">Orang Tua</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-[#f26b50] flex items-center justify-center text-white font-bold shadow-sm">
+                            {{ user.first_name|slice:":1"|default:user.username|slice:":1"|upper }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="px-6 py-6">
+            <div class="max-w-7xl mx-auto space-y-6 fade-in">
+
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-[#1c1c19]">Jadwal Imunisasi</h1>
+                        <p class="text-sm text-[#58413d] mt-1">Jadwal imunisasi untuk {{ balita.nama|default:'' }}</p>
+                    </div>
+                </div>
+
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="p-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700 border border-red-200{% else %}bg-green-100 text-green-700 border border-green-200{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if balita %}
+                <!-- Statistik Ringkas -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                    <div class="info-card text-center">
+                        <span class="material-symbols-outlined text-[#a93620] text-3xl">vaccines</span>
+                        <p class="text-2xl font-bold text-[#1c1c19] mt-1">{{ total_imunisasi }}</p>
+                        <p class="text-xs text-[#58413d]">Total Imunisasi</p>
+                    </div>
+                    <div class="info-card text-center">
+                        <span class="material-symbols-outlined text-[#a93620] text-3xl">check_circle</span>
+                        <p class="text-2xl font-bold text-[#1c1c19] mt-1">{{ imunisasi_sudah }}</p>
+                        <p class="text-xs text-[#58413d]">Sudah Dilakukan</p>
+                    </div>
+                    <div class="info-card text-center">
+                        <span class="material-symbols-outlined text-[#a93620] text-3xl">schedule</span>
+                        <p class="text-2xl font-bold text-[#1c1c19] mt-1">{{ jadwal_mendatang.count }}</p>
+                        <p class="text-xs text-[#58413d]">Akan Datang</p>
+                    </div>
+                    <div class="info-card text-center">
+                        <span class="material-symbols-outlined text-[#a93620] text-3xl">warning</span>
+                        <p class="text-2xl font-bold text-[#1c1c19] mt-1">{{ jadwal_terlewat.count }}</p>
+                        <p class="text-xs text-[#58413d]">Terlewat</p>
+                    </div>
+                </div>
+
+                <!-- Progress Imunisasi -->
+                <div class="bg-white rounded-xl border border-[#e5e2dd] p-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-[#1c1c19]">Kelengkapan Imunisasi</span>
+                        <span class="text-sm font-semibold text-[#a93620]">{{ persen_selesai }}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ persen_selesai }}%"></div>
+                    </div>
+                    <p class="text-xs text-[#58413d] mt-2">Usia saat ini: {{ usia_bulan }} bulan</p>
+                </div>
+
+                <!-- Jadwal Mendatang -->
+                {% if jadwal_mendatang %}
+                <div class="bg-white rounded-xl border border-[#e5e2dd] overflow-hidden">
+                    <div class="px-6 py-4 border-b border-[#e5e2dd] bg-green-50">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-green-600">schedule</span>
+                            <h3 class="text-lg font-semibold text-[#1c1c19]">Jadwal Mendatang</h3>
+                        </div>
+                        <p class="text-sm text-[#58413d] mt-1">Imunisasi yang akan datang</p>
+                    </div>
+                    <div class="divide-y divide-[#e5e2dd]">
+                        {% for im in jadwal_mendatang %}
+                        <div class="p-4 hover:bg-[#f6f3ee] transition">
+                            <div class="flex flex-wrap justify-between items-start gap-2">
+                                <div>
+                                    <h4 class="font-semibold text-[#1c1c19]">{{ im.get_jenis_imunisasi_display }}</h4>
+                                    <div class="flex items-center gap-4 mt-1 text-sm text-[#58413d]">
+                                        <span class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-sm">calendar_today</span>
+                                            {{ im.tanggal|date:"d M Y" }}
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-sm">location_on</span>
+                                            {{ im.tempat|default:"Posyandu" }}
+                                        </span>
+                                    </div>
+                                    {% if im.keterangan %}
+                                    <p class="text-xs text-[#8c716b] mt-2">{{ im.keterangan }}</p>
+                                    {% endif %}
+                                </div>
+                                <span class="badge-mendatang">📅 Akan Datang</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Jadwal Terlewat -->
+                {% if jadwal_terlewat %}
+                <div class="bg-white rounded-xl border border-[#e5e2dd] overflow-hidden">
+                    <div class="px-6 py-4 border-b border-[#e5e2dd] bg-red-50">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-red-500">warning</span>
+                            <h3 class="text-lg font-semibold text-[#1c1c19]">Imunisasi Terlewat</h3>
+                        </div>
+                        <p class="text-sm text-[#58413d] mt-1">Segera hubungi kader untuk jadwal ulang</p>
+                    </div>
+                    <div class="divide-y divide-[#e5e2dd]">
+                        {% for im in jadwal_terlewat %}
+                        <div class="p-4 hover:bg-[#f6f3ee] transition">
+                            <div class="flex flex-wrap justify-between items-start gap-2">
+                                <div>
+                                    <h4 class="font-semibold text-[#1c1c19]">{{ im.get_jenis_imunisasi_display }}</h4>
+                                    <div class="flex items-center gap-4 mt-1 text-sm text-[#58413d]">
+                                        <span class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-sm">calendar_today</span>
+                                            {{ im.tanggal|date:"d M Y" }}
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-sm">location_on</span>
+                                            {{ im.tempat|default:"Posyandu" }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <span class="badge-terlewat">⚠️ Terlewat</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Rekomendasi Imunisasi -->
+                {% if rekomendasi %}
+                <div class="bg-white rounded-xl border border-[#e5e2dd] overflow-hidden">
+                    <div class="px-6 py-4 border-b border-[#e5e2dd] bg-blue-50">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-blue-600">lightbulb</span>
+                            <h3 class="text-lg font-semibold text-[#1c1c19]">Rekomendasi Imunisasi</h3>
+                        </div>
+                        <p class="text-sm text-[#58413d] mt-1">Imunisasi yang direkomendasikan untuk usia {{ usia_bulan }} bulan</p>
+                    </div>
+                    <div class="divide-y divide-[#e5e2dd]">
+                        {% for rekom in rekomendasi %}
+                        <div class="p-4 hover:bg-[#f6f3ee] transition">
+                            <div class="flex flex-wrap justify-between items-start gap-2">
+                                <div>
+                                    <h4 class="font-semibold text-[#1c1c19]">{{ rekom.nama }}</h4>
+                                    <p class="text-sm text-[#58413d] mt-1">{{ rekom.keterangan }}</p>
+                                    <p class="text-xs text-[#8c716b] mt-1">Rekomendasi usia: {{ rekom.usia }} bulan</p>
+                                </div>
+                                <span class="badge-rekomendasi">💡 Rekomendasi</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Timeline Imunisasi -->
+                <div class="bg-white rounded-xl border border-[#e5e2dd] p-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="material-symbols-outlined text-[#a93620]">timeline</span>
+                        <h3 class="text-lg font-semibold text-[#1c1c19]">Timeline Imunisasi</h3>
+                    </div>
+                    <div class="space-y-4">
+                        {% for im in jadwal_mendatang|slice:":5" %}
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div>
+                                <h4 class="font-semibold text-[#1c1c19]">{{ im.get_jenis_imunisasi_display }}</h4>
+                                <p class="text-sm text-[#58413d]">{{ im.tanggal|date:"d M Y" }}</p>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-4 text-[#58413d]">
+                            <span class="material-symbols-outlined text-3xl">check_circle</span>
+                            <p class="mt-2">Semua jadwal imunisasi sudah lengkap!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Informasi Penting -->
+                <div class="bg-[#cfe1f8]/30 rounded-xl border border-[#cfe1f8] p-4">
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-[#4f6073]">info</span>
+                        <div class="text-sm text-[#58413d]">
+                            <p class="font-semibold mb-1">Informasi Penting</p>
+                            <ul class="list-disc list-inside space-y-1 text-xs">
+                                <li>Imunisasi sangat penting untuk melindungi anak dari penyakit berbahaya</li>
+                                <li>Segera hubungi kader posyandu jika ada jadwal yang terlewat</li>
+                                <li>Bawa buku KIA setiap kali imunisasi</li>
+                                <li>Pastikan anak dalam keadaan sehat saat imunisasi</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                {% else %}
+                <div class="bg-white rounded-xl border border-[#e5e2dd] p-8 text-center">
+                    <span class="material-symbols-outlined text-6xl text-gray-300">calendar_month</span>
+                    <h3 class="text-xl font-semibold text-[#1c1c19] mt-4">Belum Ada Data</h3>
+                    <p class="text-[#58413d] mt-2">Data imunisasi belum tersedia.</p>
+                    <p class="text-sm text-[#58413d] mt-1">Silakan hubungi kader posyandu untuk menambahkan data imunisasi.</p>
+                </div>
+                {% endif %}
+
+                <!-- Footer -->
+                <div class="bg-white p-5 rounded-xl border border-[#e5e2dd] text-center">
+                    <p class="text-xs text-[#58413d]">© {% now "Y" %} SIPOS - Sistem Informasi Posyandu Terintegrasi</p>
+                    <p class="text-xs text-[#8c716b] mt-1">Warm Management System | Jadwal Imunisasi</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('aside');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('hidden');
+            });
+        }
+    </script>
+</body>
+</html>

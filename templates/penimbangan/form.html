@@ -1,0 +1,716 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if penimbangan %}Edit Penimbangan{% else %}Input Pengukuran{% endif %} - SIPOS</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif; }
+        body { background-color: #fcf9f4; }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #e5e2dd; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #a93620; border-radius: 10px; }
+        
+        .sidebar-item {
+            transition: all 0.2s ease;
+            border-radius: 12px;
+        }
+        .sidebar-item:hover {
+            background-color: #f6f3ee;
+            color: #a93620;
+        }
+        .sidebar-item.active {
+            background-color: #f26b50;
+            color: #ffffff;
+        }
+        
+        .btn-primary {
+            background-color: #a93620;
+            color: white;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #881f0b;
+            transform: scale(0.98);
+        }
+        
+        .btn-secondary {
+            background-color: #e5e2dd;
+            color: #1c1c19;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #d5d2cd;
+        }
+        
+        .form-input {
+            border-radius: 12px;
+            border: 1px solid #dfbfb9;
+            transition: all 0.2s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #a93620;
+            box-shadow: 0 0 0 3px rgba(169, 54, 32, 0.2);
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1c1c19;
+            margin-bottom: 6px;
+            display: block;
+        }
+        
+        .required-star {
+            color: #ba1a1a;
+            margin-left: 4px;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8c716b;
+            font-size: 20px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        
+        .error-message {
+            color: #ba1a1a;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        
+        .status-card {
+            background: linear-gradient(135deg, #f6f3ee 0%, #ffffff 100%);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #e5e2dd;
+        }
+        
+        .status-badge-normal {
+            background-color: #c0ecda;
+            color: #002117;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-badge-kurang {
+            background-color: #ffdad6;
+            color: #93000a;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-badge-buruk {
+            background-color: #ffdad6;
+            color: #ba1a1a;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-[#fcf9f4]">
+
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col h-screen w-[280px] fixed left-0 top-0 bg-white border-r border-[#dfbfb9] z-40 shadow-sm">
+        <div class="px-6 py-8 border-b border-[#e5e2dd]">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#a93620] text-3xl">health_and_safety</span>
+                <div>
+                    <h1 class="text-2xl font-bold text-[#a93620]">SIPOS</h1>
+                    <p class="text-xs text-[#58413d] mt-0.5">Sistem Informasi Posyandu</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto custom-scrollbar">
+            <a href="{% url 'dashboard' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="text-sm font-semibold">Dashboard</span>
+            </a>
+            <a href="{% url 'balita:balita_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">child_care</span>
+                <span class="text-sm font-medium">Data Balita</span>
+            </a>
+            <a href="{% url 'penimbangan:penimbangan_create' %}" class="sidebar-item active flex items-center gap-3 px-4 py-3 transition-all bg-[#f26b50] text-white">
+                <span class="material-symbols-outlined">straighten</span>
+                <span class="text-sm font-medium">Input Pengukuran</span>
+            </a>
+            <a href="{% url 'penimbangan:penimbangan_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">monitor_weight</span>
+                <span class="text-sm font-medium">Data Penimbangan</span>
+            </a>
+            <a href="{% url 'imunisasi:imunisasi_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">vaccines</span>
+                <span class="text-sm font-medium">Imunisasi</span>
+            </a>
+            <a href="{% url 'jadwal:jadwal_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span class="text-sm font-medium">Jadwal Posyandu</span>
+            </a>
+            <a href="{% url 'artikel:artikel_list' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">article</span>
+                <span class="text-sm font-medium">Artikel Edukasi</span>
+            </a>
+            <a href="{% url 'laporan:laporan_index' %}" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">assessment</span>
+                <span class="text-sm font-medium">Laporan</span>
+            </a>
+
+            {% if user.is_staff %}
+            <a href="#" class="sidebar-item flex items-center gap-3 px-4 py-3 transition-all text-[#1c1c19]">
+                <span class="material-symbols-outlined">admin_panel_settings</span>
+                <span class="text-sm font-medium">Manajemen Kader</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <div class="px-4 py-6 border-t border-[#e5e2dd] space-y-1">
+            <a href="{% url 'pengaturan' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-[#1c1c19] hover:bg-[#f6f3ee] hover:text-[#a93620]">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-sm font-medium">Pengaturan</span>
+            </a>
+            <form method="post" action="{% url 'logout' %}" class="w-full">
+                {% csrf_token %}
+                <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all text-[#ba1a1a] hover:bg-[#ffdad6]">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span class="text-sm font-medium">Keluar</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 md:ml-[280px] min-h-screen">
+        <!-- TOP BAR -->
+        <header class="sticky top-0 z-30 bg-[#fcf9f4]/95 backdrop-blur-md shadow-sm border-b border-[#dfbfb9]">
+            <div class="flex justify-between items-center px-6 py-4">
+                <button id="sidebarToggle" class="md:hidden p-2 rounded-lg text-[#58413d] hover:bg-[#f6f3ee]">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div class="flex items-center gap-4 flex-1 max-w-md">
+                    <div class="relative w-full">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#58413d]">search</span>
+                        <input type="text" placeholder="Cari data balita..." 
+                               class="w-full pl-10 pr-4 py-2.5 bg-white border border-[#dfbfb9] rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none text-sm transition-all">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="relative p-2 rounded-full text-[#58413d] hover:bg-[#f6f3ee] transition-colors">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-[#ba1a1a] rounded-full border-2 border-[#fcf9f4]"></span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-3 border-l border-[#dfbfb9]">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold text-[#1c1c19]">{{ user.get_full_name|default:user.username }}</p>
+                            <p class="text-xs text-[#58413d]">Kader Posyandu</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-[#f26b50] flex items-center justify-center text-white font-bold shadow-sm">
+                            {{ user.first_name|slice:":1"|default:user.username|slice:":1"|upper }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="px-6 py-6">
+            <div class="max-w-5xl mx-auto fade-in">
+
+                <!-- Header -->
+                <div class="flex items-center gap-4 mb-6">
+                    <a href="{% url 'penimbangan:penimbangan_list' %}" class="text-[#a93620] hover:text-[#881f0b] transition">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </a>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-[#1c1c19]">
+                            {% if penimbangan %}Edit Penimbangan{% else %}Input Pengukuran{% endif %}
+                        </h1>
+                        <p class="text-sm text-[#58413d] mt-1">
+                            {% if penimbangan %}Perbaharui data penimbangan balita{% else %}Catat hasil pengukuran berat dan tinggi badan balita{% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700 border border-red-200{% else %}bg-green-100 text-green-700 border border-green-200{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Form Card -->
+                <div class="bg-white rounded-2xl border border-[#e5e2dd] shadow-sm overflow-hidden">
+                    <form method="post" id="pengukuranForm" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Form Body -->
+                        <div class="p-6 md:p-8">
+                            <!-- Info Section -->
+                            <div class="mb-6 pb-4 border-b border-[#e5e2dd]">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[#a93620]">straighten</span>
+                                    <h2 class="text-lg font-semibold text-[#1c1c19]">Data Pengukuran</h2>
+                                </div>
+                                <p class="text-sm text-[#58413d] mt-1">Isi data pengukuran balita dengan teliti dan akurat</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Pilih Balita -->
+                                <div class="md:col-span-2">
+                                    <label class="form-label">
+                                        Pilih Balita <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">child_care</span>
+                                        <select name="balita" id="balita" required
+                                                class="form-input w-full pl-10 pr-10 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all appearance-none bg-white">
+                                            <option value="">-- Pilih Balita --</option>
+                                            {% for b in balita_list %}
+                                            <option value="{{ b.id }}" data-tgl-lahir="{{ b.tanggal_lahir|date:'Y-m-d' }}"
+                                                    {% if penimbangan.balita.id == b.id %}selected{% endif %}>
+                                                {{ b.nama }} - {{ b.nama_ibu }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">expand_more</span>
+                                    </div>
+                                    <div class="error-message" id="error-balita"></div>
+                                </div>
+
+                                <!-- Info Balita Card -->
+                                <div id="infoBalitaCard" class="md:col-span-2 status-card hidden">
+                                    <div class="flex flex-col md:flex-row gap-4">
+                                        <div class="flex-1">
+                                            <p class="text-xs text-[#58413d] mb-1">Nama Balita</p>
+                                            <p class="font-semibold text-[#1c1c19]" id="infoNama">-</p>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-xs text-[#58413d] mb-1">Usia</p>
+                                            <p class="font-semibold text-[#1c1c19]" id="infoUsia">-</p>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-xs text-[#58413d] mb-1">Ibu Kandung</p>
+                                            <p class="font-semibold text-[#1c1c19]" id="infoIbu">-</p>
+                                        </div>
+                                        <div class="flex-1">
+                                            <p class="text-xs text-[#58413d] mb-1">Penimbangan Terakhir</p>
+                                            <p class="font-semibold text-[#1c1c19]" id="infoTerakhir">-</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tanggal Penimbangan -->
+                                <div>
+                                    <label class="form-label">
+                                        Tanggal Penimbangan <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">calendar_today</span>
+                                        <input type="date" name="tanggal" id="tanggal" value="{{ penimbangan.tanggal|date:'Y-m-d'|default:today }}" required
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all">
+                                    </div>
+                                    <div class="error-message" id="error-tanggal"></div>
+                                </div>
+
+                                <!-- Usia Saat Ini -->
+                                <div>
+                                    <label class="form-label">Usia Saat Pengukuran</label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">timeline</span>
+                                        <input type="text" id="usia_saat_ini" readonly
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl bg-[#f6f3ee] text-[#58413d] cursor-not-allowed"
+                                               placeholder="Otomatis terhitung">
+                                    </div>
+                                </div>
+
+                                <!-- Berat Badan -->
+                                <div>
+                                    <label class="form-label">
+                                        Berat Badan (kg) <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">fitness_center</span>
+                                        <input type="number" step="0.01" name="berat_badan" id="berat_badan" value="{{ penimbangan.berat_badan|default:'' }}" required
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="Contoh: 12.5">
+                                    </div>
+                                    <div class="error-message" id="error-berat"></div>
+                                    <p class="text-xs text-[#8c716b] mt-1">* Dalam kilogram (kg)</p>
+                                </div>
+
+                                <!-- Tinggi Badan -->
+                                <div>
+                                    <label class="form-label">
+                                        Tinggi Badan (cm) <span class="required-star">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">height</span>
+                                        <input type="number" step="0.01" name="tinggi_badan" id="tinggi_badan" value="{{ penimbangan.tinggi_badan|default:'' }}" required
+                                               class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all"
+                                               placeholder="Contoh: 88.5">
+                                    </div>
+                                    <div class="error-message" id="error-tinggi"></div>
+                                    <p class="text-xs text-[#8c716b] mt-1">* Dalam centimeter (cm)</p>
+                                </div>
+                            </div>
+
+                            <!-- Status Gizi Section -->
+                            <div class="mt-8 pt-6 pb-4 border-t border-[#e5e2dd]">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <span class="material-symbols-outlined text-[#a93620]">health_and_safety</span>
+                                    <h2 class="text-lg font-semibold text-[#1c1c19]">Status Gizi</h2>
+                                </div>
+                                <p class="text-sm text-[#58413d] mt-1 mb-4">Status gizi akan dihitung otomatis berdasarkan berat dan tinggi badan</p>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <!-- Status Card -->
+                                    <div class="md:col-span-2">
+                                        <div id="statusCard" class="status-card">
+                                            <div class="flex items-center gap-3 mb-3">
+                                                <span class="material-symbols-outlined text-[#a93620]">monitor_heart</span>
+                                                <span class="font-semibold text-[#1c1c19]">Hasil Analisis Status Gizi</span>
+                                            </div>
+                                            <div id="statusResult" class="text-center py-4">
+                                                <span class="status-badge-normal">Masukkan berat dan tinggi badan</span>
+                                            </div>
+                                            <div id="statusDesc" class="text-sm text-[#58413d] text-center mt-2">
+                                                Sistem akan menganalisis status gizi berdasarkan standar WHO
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Status Input Manual (Opsional) -->
+                                    <div>
+                                        <label class="form-label">Status Gizi (Manual)</label>
+                                        <div class="relative">
+                                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">edit_note</span>
+                                            <select name="status_gizi" id="status_gizi" class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all appearance-none bg-white">
+                                                <option value="">-- Pilih Status --</option>
+                                                <option value="Normal" {% if penimbangan.status_gizi == 'Normal' %}selected{% endif %}>Normal</option>
+                                                <option value="Gizi Kurang" {% if penimbangan.status_gizi == 'Gizi Kurang' %}selected{% endif %}>Gizi Kurang</option>
+                                                <option value="Gizi Buruk" {% if penimbangan.status_gizi == 'Gizi Buruk' %}selected{% endif %}>Gizi Buruk</option>
+                                                <option value="Resiko Stunting" {% if penimbangan.status_gizi == 'Resiko Stunting' %}selected{% endif %}>Resiko Stunting</option>
+                                            </select>
+                                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#8c716b] text-lg">expand_more</span>
+                                        </div>
+                                        <p class="text-xs text-[#8c716b] mt-1">* Biarkan kosong untuk auto hitung</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Keterangan -->
+                            <div class="mt-6 pt-4">
+                                <label class="form-label">Keterangan Tambahan</label>
+                                <div class="relative">
+                                    <span class="material-symbols-outlined absolute left-3 top-3 text-[#8c716b] text-lg">notes</span>
+                                    <textarea name="keterangan" id="keterangan" rows="3"
+                                              class="form-input w-full pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-[#a93620] focus:border-[#a93620] outline-none transition-all resize-none"
+                                              placeholder="Catatan tambahan (opsional)">{{ penimbangan.keterangan|default:'' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="px-6 md:px-8 py-4 bg-[#f6f3ee] border-t border-[#e5e2dd] flex flex-col sm:flex-row justify-end gap-3">
+                            <a href="{% url 'penimbangan:penimbangan_list' %}" class="btn-secondary px-6 py-2.5 rounded-xl font-semibold text-center">
+                                Batal
+                            </a>
+                            <button type="submit" class="btn-primary px-6 py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-base">save</span>
+                                <span>{% if penimbangan %}Simpan Perubahan{% else %}Simpan Pengukuran{% endif %}</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Informasi Tambahan -->
+                <div class="mt-6 p-4 bg-[#f6f3ee] rounded-xl border border-[#e5e2dd]">
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-[#a93620]">info</span>
+                        <div class="text-sm text-[#58413d]">
+                            <p class="font-semibold mb-1">Informasi Penting:</p>
+                            <ul class="list-disc list-inside space-y-1 text-xs">
+                                <li>Field dengan tanda <span class="text-red-500">*</span> wajib diisi</li>
+                                <li>Status gizi dapat diisi manual atau dibiarkan kosong untuk dihitung otomatis</li>
+                                <li>Rekomendasi: Lakukan penimbangan setiap bulan untuk memantau pertumbuhan</li>
+                                <li>Data penimbangan akan digunakan untuk grafik pertumbuhan balita</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sidebar toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('aside');
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('hidden');
+            });
+        }
+
+        // Data balita dari backend
+        const balitaData = {
+            {% for b in balita_list %}
+            "{{ b.id }}": {
+                nama: "{{ b.nama|escapejs }}",
+                tgl_lahir: "{{ b.tanggal_lahir|date:'Y-m-d' }}",
+                ibu: "{{ b.nama_ibu|escapejs }}",
+                penimbangan_terakhir: "{{ b.penimbangan_set.last.tanggal|date:'d/m/Y'|default:'Belum pernah' }}"
+            },
+            {% endfor %}
+        };
+
+        // Get elements
+        const balitaSelect = document.getElementById('balita');
+        const infoBalitaCard = document.getElementById('infoBalitaCard');
+        const infoNama = document.getElementById('infoNama');
+        const infoUsia = document.getElementById('infoUsia');
+        const infoIbu = document.getElementById('infoIbu');
+        const infoTerakhir = document.getElementById('infoTerakhir');
+        const tanggalInput = document.getElementById('tanggal');
+        const usiaDisplay = document.getElementById('usia_saat_ini');
+        const beratInput = document.getElementById('berat_badan');
+        const tinggiInput = document.getElementById('tinggi_badan');
+        const statusResult = document.getElementById('statusResult');
+        const statusDesc = document.getElementById('statusDesc');
+        const statusGiziSelect = document.getElementById('status_gizi');
+
+        // Function to calculate age
+        function hitungUsia(tglLahir, tglPengukuran = null) {
+            if (!tglLahir) return '';
+            const birthDate = new Date(tglLahir);
+            const measureDate = tglPengukuran ? new Date(tglPengukuran) : new Date();
+            
+            let ageYears = measureDate.getFullYear() - birthDate.getFullYear();
+            let ageMonths = measureDate.getMonth() - birthDate.getMonth();
+            let ageDays = measureDate.getDate() - birthDate.getDate();
+            
+            if (ageDays < 0) {
+                ageMonths--;
+                const lastMonth = new Date(measureDate.getFullYear(), measureDate.getMonth(), 0);
+                ageDays += lastMonth.getDate();
+            }
+            
+            if (ageMonths < 0) {
+                ageYears--;
+                ageMonths += 12;
+            }
+            
+            if (ageYears < 1) {
+                if (ageMonths < 1) {
+                    return `${ageDays} hari`;
+                }
+                return `${ageMonths} bulan`;
+            }
+            return `${ageYears} tahun ${ageMonths > 0 ? ageMonths + ' bulan' : ''}`;
+        }
+
+        // Update balita info
+        function updateBalitaInfo() {
+            const balitaId = balitaSelect.value;
+            if (balitaId && balitaData[balitaId]) {
+                const data = balitaData[balitaId];
+                infoNama.textContent = data.nama;
+                infoIbu.textContent = data.ibu;
+                infoTerakhir.textContent = data.penimbangan_terakhir;
+                infoBalitaCard.classList.remove('hidden');
+                
+                // Update usia berdasarkan tanggal lahir dan tanggal pengukuran
+                updateUsia();
+            } else {
+                infoBalitaCard.classList.add('hidden');
+                usiaDisplay.value = '';
+            }
+        }
+
+        // Update usia
+        function updateUsia() {
+            const balitaId = balitaSelect.value;
+            if (balitaId && balitaData[balitaId]) {
+                const tglLahir = balitaData[balitaId].tgl_lahir;
+                const tglUkur = tanggalInput.value;
+                const usia = hitungUsia(tglLahir, tglUkur);
+                usiaDisplay.value = usia;
+            } else {
+                usiaDisplay.value = '';
+            }
+        }
+
+        // Calculate status gizi (sederhana, bisa dikembangkan dengan standar WHO)
+        function calculateStatusGizi(berat, tinggi, usia) {
+            if (!berat || !tinggi) return null;
+            
+            // Logika sederhana - bisa diganti dengan standar WHO yang lebih akurat
+            const bmi = berat / ((tinggi / 100) ** 2);
+            
+            if (bmi < 14) return 'Gizi Buruk';
+            if (bmi < 17) return 'Gizi Kurang';
+            if (bmi >= 17 && bmi <= 22) return 'Normal';
+            return 'Overweight';
+        }
+
+        // Update status gizi
+        function updateStatusGizi() {
+            // Jika status gizi sudah diisi manual, jangan override
+            if (statusGiziSelect.value) return;
+            
+            const berat = parseFloat(beratInput.value);
+            const tinggi = parseFloat(tinggiInput.value);
+            const usia = usiaDisplay.value;
+            
+            if (berat && tinggi && !isNaN(berat) && !isNaN(tinggi)) {
+                const status = calculateStatusGizi(berat, tinggi, usia);
+                
+                if (status === 'Normal') {
+                    statusResult.innerHTML = '<span class="status-badge-normal">✅ Normal</span>';
+                    statusDesc.innerHTML = 'Status gizi normal. Pertumbuhan anak baik. Pertahankan pola makan sehat.';
+                    statusGiziSelect.value = 'Normal';
+                } else if (status === 'Gizi Kurang') {
+                    statusResult.innerHTML = '<span class="status-badge-kurang">⚠️ Gizi Kurang</span>';
+                    statusDesc.innerHTML = 'Status gizi kurang. Perlu peningkatan asupan nutrisi dan konsultasi dengan tenaga kesehatan.';
+                    statusGiziSelect.value = 'Gizi Kurang';
+                } else if (status === 'Gizi Buruk') {
+                    statusResult.innerHTML = '<span class="status-badge-buruk">⚠️ Gizi Buruk</span>';
+                    statusDesc.innerHTML = 'Status gizi buruk. Segera konsultasikan dengan tenaga kesehatan untuk penanganan lebih lanjut.';
+                    statusGiziSelect.value = 'Gizi Buruk';
+                } else {
+                    statusResult.innerHTML = '<span class="status-badge-warning">⚠️ Overweight</span>';
+                    statusDesc.innerHTML = 'Berat badan berlebih. Perhatikan pola makan dan tingkatkan aktivitas fisik.';
+                    statusGiziSelect.value = 'Overweight';
+                }
+            } else {
+                statusResult.innerHTML = '<span class="status-badge-normal">Masukkan berat dan tinggi badan</span>';
+                statusDesc.innerHTML = 'Sistem akan menganalisis status gizi berdasarkan standar WHO';
+            }
+        }
+
+        // Event listeners
+        balitaSelect.addEventListener('change', updateBalitaInfo);
+        tanggalInput.addEventListener('change', updateUsia);
+        beratInput.addEventListener('input', updateStatusGizi);
+        tinggiInput.addEventListener('input', updateStatusGizi);
+        statusGiziSelect.addEventListener('change', function() {
+            if (this.value) {
+                // Jika manual dipilih, tampilkan sesuai pilihan
+                const status = this.value;
+                if (status === 'Normal') {
+                    statusResult.innerHTML = '<span class="status-badge-normal">✅ Normal</span>';
+                    statusDesc.innerHTML = 'Status gizi normal. Pertumbuhan anak baik.';
+                } else if (status === 'Gizi Kurang') {
+                    statusResult.innerHTML = '<span class="status-badge-kurang">⚠️ Gizi Kurang</span>';
+                    statusDesc.innerHTML = 'Status gizi kurang. Perlu peningkatan asupan nutrisi.';
+                } else if (status === 'Gizi Buruk') {
+                    statusResult.innerHTML = '<span class="status-badge-buruk">⚠️ Gizi Buruk</span>';
+                    statusDesc.innerHTML = 'Status gizi buruk. Segera konsultasikan dengan tenaga kesehatan.';
+                } else {
+                    statusResult.innerHTML = '<span class="status-badge-warning">⚠️ Resiko Stunting</span>';
+                    statusDesc.innerHTML = 'Deteksi dini resiko stunting. Konsultasikan dengan tenaga kesehatan.';
+                }
+            } else {
+                updateStatusGizi();
+            }
+        });
+
+        // Initialize
+        updateBalitaInfo();
+        
+        // Set today's date as default if not set
+        if (!tanggalInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            tanggalInput.value = today;
+        }
+        updateUsia();
+
+        // Form validation
+        const form = document.getElementById('pengukuranForm');
+        
+        function validateForm() {
+            let isValid = true;
+            
+            document.querySelectorAll('.error-message').forEach(el => el.innerHTML = '');
+            
+            const balita = document.getElementById('balita');
+            if (!balita.value) {
+                document.getElementById('error-balita').innerHTML = 'Pilih balita terlebih dahulu';
+                balita.classList.add('border-red-500');
+                isValid = false;
+            } else {
+                balita.classList.remove('border-red-500');
+            }
+            
+            const tanggal = document.getElementById('tanggal');
+            if (!tanggal.value) {
+                document.getElementById('error-tanggal').innerHTML = 'Tanggal penimbangan harus diisi';
+                tanggal.classList.add('border-red-500');
+                isValid = false;
+            } else {
+                tanggal.classList.remove('border-red-500');
+            }
+            
+            const berat = document.getElementById('berat_badan');
+            if (!berat.value || parseFloat(berat.value) <= 0) {
+                document.getElementById('error-berat').innerHTML = 'Berat badan harus diisi dengan angka positif';
+                berat.classList.add('border-red-500');
+                isValid = false;
+            } else {
+                berat.classList.remove('border-red-500');
+            }
+            
+            const tinggi = document.getElementById('tinggi_badan');
+            if (!tinggi.value || parseFloat(tinggi.value) <= 0) {
+                document.getElementById('error-tinggi').innerHTML = 'Tinggi badan harus diisi dengan angka positif';
+                tinggi.classList.add('border-red-500');
+                isValid = false;
+            } else {
+                tinggi.classList.remove('border-red-500');
+            }
+            
+            return isValid;
+        }
+        
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (!validateForm()) {
+                    e.preventDefault();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

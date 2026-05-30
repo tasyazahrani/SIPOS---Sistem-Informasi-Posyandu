@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout - SIPOS</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <style>
+        * { font-family: 'Montserrat', sans-serif; }
+        body { background: linear-gradient(135deg, #a93620 0%, #881f0b 100%); min-height: 100vh; }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 text-center">
+        <div class="w-20 h-20 bg-[#ffdad3] rounded-full flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-[#a93620] text-4xl">logout</span>
+        </div>
+        
+        <h2 class="text-2xl font-bold text-[#1c1c19] mb-2">Anda Telah Keluar</h2>
+        <p class="text-[#58413d] mb-6">Terima kasih telah menggunakan SIPOS</p>
+        
+        <div class="flex flex-col gap-3">
+            <a href="{% url 'login' %}" class="bg-[#a93620] hover:bg-[#881f0b] text-white font-semibold py-3 rounded-xl transition-all duration-200">
+                Login Kembali
+            </a>
+            <a href="{% url 'home' %}" class="border-2 border-[#a93620] text-[#a93620] hover:bg-[#a93620] hover:text-white font-semibold py-3 rounded-xl transition-all duration-200">
+                Kembali ke Beranda
+            </a>
+        </div>
+        
+        <p class="text-xs text-[#8c716b] mt-6">© {% now "Y" %} SIPOS - Sistem Informasi Posyandu</p>
+    </div>
+</body>
+</html>
